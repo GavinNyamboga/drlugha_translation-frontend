@@ -1,0 +1,152 @@
+.text-top {
+  background-image: url("/assets/images/vector\ 3.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  // overflow-y: auto;
+  height:100vh;
+}
+
+.icontext {
+  top: 20px;
+  position: absolute;
+  left: 20px;
+  z-index: 9999;
+}
+
+.display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  top: 10px;
+  position: relative;
+  // background-color: white;
+  width: 300px;
+
+  .btn1 {
+    padding-block: 20px;
+    padding-inline: 40px;
+    background: rgba(84, 74, 244, 0.33);
+    // background: radial-gradient(circle, rgba(72, 222, 255, 0.5) 0%, rgba(110, 191, 244, 0.112) 35%, rgba(72, 222, 255, 0.5) 100%);
+    border-radius: 4px;
+    width: 25rem;
+
+  }
+}
+
+.btn1 {
+  padding-block: 14px;
+  padding-inline: 14px;
+  background: rgba(131, 128, 170, 0.774);
+  // background: radial-gradient(circle, rgba(72, 222, 255, 0.5) 0%, rgba(110, 191, 244, 0.112) 35%, rgba(72, 222, 255, 0.5) 100%);
+  border-radius: 4px;
+  // width: 25rem;
+}
+
+.funny {
+  background: rgba(131, 128, 170, 0.774);
+  color: white;
+  display: flex;
+  margin: 10px;
+  margin-inline: auto;
+  border-radius: 8px;
+  max-width: 600px;
+  justify-content: center;
+  text-align: center;
+  align-items: center;
+
+  @media (min-width: 576px) {
+    .btn1 {
+      width: 18rem;
+    }
+  }
+
+  .btn1 {
+    background-color: unset;
+    padding-block: .5em;
+    font-weight: 700;
+  }
+
+}
+
+.textnow {
+  color: white;
+}
+
+.next {
+  float: right;
+  border-radius: 24.9px;
+  border: 1px solid rgba(84, 74, 244, 0.8);
+  color: rgba(84, 74, 244, 0.8);
+  font-weight: 500;
+  padding-inline: 30px;
+  padding-block: 6px;
+  margin-block: .5em;
+  transition: background-color 0.5s ease;
+}
+
+.next:hover {
+  background-color: rgba(84, 74, 244, 0.8);
+  color: white;
+}
+
+.colors{
+  color:rgba(84, 74, 244, 0.8);
+}
+
+.trashcon{
+  margin: 1rem 0;
+}
+
+@media screen and (min-width: 480px) {
+  .enterhere{
+    font-size: x-large;
+  }
+}
+
+@media screen and (min-width: 480px) {
+  .enterhere{
+    font-size: x-large;
+  }
+}
+
+@media screen and (min-width: 480px) {
+  .title {
+    color: black;
+  }
+
+  .textnow {
+    color: black;
+  }
+
+}
+
+@media screen and (min-width: 480px) {
+  .trashcon{
+    display: none;
+    // position: absolute;
+    // top: 300px;
+  }
+
+}
+@media screen and (min-width: 480px) {
+  .text-card{
+    font-size: x-large;
+  }
+  .text-translation{
+    font-size: x-large;
+  }
+
+}
+@media screen and (min-width: 600px) {
+  .trashcon{
+    position: absolute;
+    top: 430px;
+    right: 550px;
+  }
+
+}
+
+.content{
+  padding: 1rem;
+}
+

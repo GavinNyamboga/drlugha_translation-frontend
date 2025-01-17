@@ -1,0 +1,38 @@
+<div class="d-flex justify-content-between align-content-center" style="height: 36px">
+	<h3 class="h3 mb-2" style="">{{ statsPerUser?.username }}</h3>
+	<button *ngIf="isAdmin" class="btn btn-sm btn-primary" [routerLink]="['/main/users/edit', statsPerUser?.userId]">
+		<span class="mr-25" [data-feather]="'edit-3'"></span>
+		<span class="d-none d-sm-inline-block">Edit User</span>
+	</button>
+</div>
+<ul ngbNav #navWithIcons="ngbNav" class="nav-tabs">
+	<li [ngbNavItem]="'text'">
+		<a ngbNavLink><span [data-feather]="'align-left'"></span>Sentences</a>
+		<ng-template ngbNavContent>
+			<ng-template [ngTemplateOutlet]="sentencesData"></ng-template>
+		</ng-template>
+	</li>
+	<li [ngbNavItem]="'audio'">
+		<a ngbNavLink><span [data-feather]="'headphones'"></span>Audios</a>
+		<ng-template ngbNavContent>
+			<ng-template [ngTemplateOutlet]="audioData"></ng-template>
+		</ng-template>
+	</li>
+</ul>
+<div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+
+<ng-template #sentencesData>
+	<app-sentence-statistics [statsPerUser]="statsPerUser">
+	</app-sentence-statistics>
+	<app-sentence-assignments [userBatchDetailsStats]="userBatchDetailsStats"
+							  [canViewSentences]="isAdmin">
+	</app-sentence-assignments>
+</ng-template>
+
+<ng-template #audioData>
+	<app-audio-statistics [statsPerUser]="statsPerUser">
+	</app-audio-statistics>
+	<app-audio-assignments [userBatchDetailsStats]="userBatchDetailsStats"
+						   [canViewSentences]="isAdmin">
+	</app-audio-assignments>
+</ng-template>

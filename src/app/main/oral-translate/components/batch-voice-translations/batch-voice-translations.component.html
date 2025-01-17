@@ -1,0 +1,64 @@
+<div class="table-responsive">
+    <table class="table table-bordered">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Sentence</th>
+            <th>Translation</th>
+            <th style="width: 20%">Audio</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let sentence of recordedSentences; let sentenceIndex = index">
+            <td>{{sentenceIndex + 1}}</td>
+            <td>{{sentence.sentenceText}}</td>
+            <td>{{sentence.translatedSentenceText}}</td>
+            <td>
+                <div class="d-flex flex-row align-items-center">
+                    <audio controls [id]="sentence.translatedSentenceId">
+                        <source [src]="sentence.audioLink" type="audio/mpeg">
+                    </audio>
+                    <div *ngIf="!sentence.accepted"
+                         class="ms-2 fs-4 re-record-icon"
+                         (click)="openAudioRecordingModal(recordAudioModal, sentence)">
+                        <i [data-feather]="'rotate-cw'"></i>
+                    </div>
+                </div>
+            </td>
+            <td>
+                <small *ngIf="sentence.accepted == null" class="badge badge-warning">
+                     Pending Review
+                </small>
+                <small *ngIf="sentence.accepted" class="badge badge-success">
+                     Approved
+                </small>
+                <small *ngIf="sentence.accepted == false" class="badge badge-danger">
+                    Rejected
+                </small>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<ng-template #recordAudioModal let-modal>
+    <div class="modal-header">
+        Record Audio Translation
+
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <app-record-audio
+                [uploadingAudio]="uploadingAudio"
+                (saveAudio)="saveAudioRecording($event)">
+            <div class="text-center mb-3">
+                <span>
+                    {{ selectedSentence.sentenceText }}
+                </span>
+            </div>
+        </app-record-audio>
+    </div>
+</ng-template>

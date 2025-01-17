@@ -1,0 +1,21 @@
+<app-assignments-view
+	[title]="showModerationView ? 'Text Verification' : 'Text Moderation'"
+	[defaultUrl]="'/main/text-translate/'"
+	[batchDetails]="batchDetailAssignments">
+	<ng-container *ngIf="showModerationView; else showReviewedSentences">
+		<app-sentences-to-moderate
+			[unreviewedSentences]="moderationAssignment?.unreviewedSentences || []"
+			[batchDetailsId]="moderationAssignment?.batchDetailsId || batchDetailsId"
+			[batchType]="moderationAssignment?.batchType"
+			[language]="moderationAssignment?.language"
+			[currentRouteDetails]="currentRouteDetails">
+		</app-sentences-to-moderate>
+	</ng-container>
+	<ng-template #showReviewedSentences>
+		<app-reviewed-sentences
+			[language]="moderationAssignment?.language"
+			[batchType]="moderationAssignment.batchType"
+			[reviewedSentences]="moderationAssignment?.reviewedSentences">
+		</app-reviewed-sentences>
+	</ng-template>
+</app-assignments-view>

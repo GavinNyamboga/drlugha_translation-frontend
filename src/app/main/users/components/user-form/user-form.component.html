@@ -1,0 +1,72 @@
+<form [formGroup]="userForm" (ngSubmit)="submitForm()">
+	<div class="row" >
+
+		<div class="col-12 col-md-6 my-1">
+			<label for="username">Username</label>
+			<input id="username"
+				   formControlName="username"
+				   class="form-control"
+				   [ngClass]="{'is-invalid': f['username'].invalid && f['username'].touched}"
+				   type="text">
+			<div *ngIf="f['username'].invalid && f['username'].touched" class="invalid-feedback">
+				<div *ngIf="f['username'].errors.required">Username is required</div>
+			</div>
+		</div>
+
+		<div class="col-12 col-md-6 my-1">
+			<label for="email">Email</label>
+			<input id="email"
+				   formControlName="email"
+				   class="form-control"
+				   [ngClass]="{'is-invalid': f['email'].invalid && f['email'].touched}"
+				   type="text">
+			<div *ngIf="f['email'].invalid && f['email'].touched" class="invalid-feedback">
+				<div *ngIf="f['email'].errors.required">Email is required</div>
+				<div *ngIf="f['email'].errors.email">Provide a valid email address</div>
+			</div>
+		</div>
+
+		<div class="col-12 col-md-6 my-1">
+			<label for="phoneNo">Phone</label>
+			<input id="phoneNo"
+				   formControlName="phoneNo"
+				   class="form-control"
+				   [ngClass]="{'is-invalid': f['phoneNo'].invalid && f['phoneNo'].touched}"
+				   type="text">
+			<div *ngIf="f['phoneNo'].invalid && f['phoneNo'].touched" class="invalid-feedback">
+				<div *ngIf="f['phoneNo'].errors.required">Phone number is required</div>
+			</div>
+		</div>
+
+
+		<div class="col-12 col-md-6 my-1" *ngIf="isAdmin">
+			<label for="roles">Role</label>
+			<ng-select formControlName="roles"
+					id="roles"
+					[ngClass]="{'is-invalid': f['roles'].invalid && f['roles'].touched}">
+				<ng-option value="ROLE_ADMIN">Admin</ng-option>
+				<ng-option value="ROLE_MODERATOR">Moderator</ng-option>
+				<ng-option value="ROLE_USER">Translator</ng-option>
+				<ng-option value="ROLE_VIEWER">Viewer</ng-option>
+			</ng-select>
+			<div *ngIf="f['roles'].invalid && f['roles'].touched" class="invalid-feedback">
+				<div *ngIf="f['roles'].errors.required">Role is required</div>
+			</div>
+		</div>
+
+		<div class="col-12 col-md-6 my-1" *ngIf="isCreateMode">
+			<label for="password">Password</label>
+			<input id="password"
+				   formControlName="password"
+				   class="form-control"
+				   [ngClass]="{'is-invalid': f['password'].invalid && f['password'].touched}"
+				   type="text">
+			<div *ngIf="f['password'].invalid && f['password'].touched" class="invalid-feedback">
+				<div *ngIf="f['password'].errors.required">Password is required</div>
+			</div>
+		</div>
+	</div>
+	<div>
+		<ng-content></ng-content>
+	</div>
+</form>

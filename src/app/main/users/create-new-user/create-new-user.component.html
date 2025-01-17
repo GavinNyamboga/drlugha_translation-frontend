@@ -1,0 +1,13 @@
+<div class="card">
+    <div class="card-header">
+        <h4>Create User</h4>
+    </div>
+    <div class="card-body">
+        <div>
+			<app-user-form (formSubmitted)="createUser($event)">
+				<button [routerLink]="['/main/users/reports']" type="button" class="btn btn-light mt-2 mr-2">Back</button>
+				<button type="submit" class="btn btn-primary mt-2 pull-right">Submit</button>
+			</app-user-form>
+        </div>
+    </div>
+</div>

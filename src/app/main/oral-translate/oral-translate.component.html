@@ -1,0 +1,64 @@
+<!--<div *ngIf="false" class="content-area-wrapper container-xxl p-0">-->
+<!--    <core-sidebar-->
+<!--            class="sidebar-left"-->
+<!--            name="batch-details-sidebar"-->
+<!--            overlayClass="body-content-overlay"-->
+<!--            collapsibleSidebar="bs-gt-lg"-->
+<!--    >-->
+<!--        <div class="main-sidebar sidebar">-->
+<!--            <div class="sidebar-content batch-details-sidebar">-->
+<!--                <div class="todo-app-menu" [perfectScrollbar]>-->
+<!--                    <ng-container *ngIf="!batchDetailAssignments?.length">-->
+<!--                        <div class="alert alert-info m-3 pb-1">-->
+<!--                            <p class="text-center">No previous assignments found</p>-->
+<!--                        </div>-->
+<!--                    </ng-container>-->
+<!--                    <ng-container *ngIf="batchDetailAssignments?.length">-->
+<!--                        <div class="mt-1 px-2 d-flex justify-content-between">-->
+<!--                            <h6 class="section-label mb-1">Assignments</h6>-->
+<!--                            <i data-feather="check-circle"></i>-->
+<!--                        </div>-->
+
+<!--                        <div class="sidebar-menu-list">-->
+<!--                            <div class="list-group list-group-filters">-->
+<!--                                <a-->
+<!--                                        *ngFor="let batchDetail of batchDetailAssignments"-->
+<!--                                        [routerLink]="currentUrl"-->
+<!--                                        [queryParams]="{ batchDetailsId: batchDetail.batchDetailsId }"-->
+<!--                                        [routerLinkActive]="'active'"-->
+<!--                                        class="list-group-item list-group-item-action"-->
+<!--                                >-->
+<!--                                    <span class="align-middle">-->
+<!--                                        {{ batchDetail.batchSource }}-->
+<!--                                        ({{ batchDetail.language }})-->
+<!--                                    </span>-->
+<!--                                    <div class="clearfix"></div>-->
+<!--                                    <span class="badge badge-pill mt-1"-->
+<!--                                          [class.badge-light-success]="batchAudioStatus(batchDetail) "-->
+<!--                                          [class.badge-light-warning]="!batchAudioStatus(batchDetail) ">-->
+<!--                                        {{ batchAudioStatus(batchDetail)? 'Recorded' : 'Pending' }}-->
+<!--                                    </span>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                    </ng-container>-->
+<!--                </div>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </core-sidebar>-->
+
+<!--    &lt;!&ndash; content-right &ndash;&gt;-->
+<!--    <div class="content-right">-->
+<!--        <div class="content-wrapper container-xxl p-0">-->
+<!--            <div class="content-body">-->
+<!--                <router-outlet></router-outlet>-->
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--    &lt;!&ndash;/ content-right &ndash;&gt;-->
+<!--</div>-->
+<app-assignments-view
+	[title]="currentPage == 'recording' ? 'Voice Recording' : 'Voice Review'"
+	[batchDetails]="batchDetailAssignments">
+	<router-outlet></router-outlet>
+</app-assignments-view>

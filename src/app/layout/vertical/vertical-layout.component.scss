@@ -1,0 +1,8 @@
+@import '@core/scss/base/core/menu/menu-types/vertical-menu.scss';
+@import '@core/scss/base/core/menu/menu-types/vertical-overlay-menu.scss';
+
+.navbar-background{
+  background-image: url("/assets/images/vector 3.png");
+  background-repeat: no-repeat;
+  background-size: 100% $navbar-height;
+}

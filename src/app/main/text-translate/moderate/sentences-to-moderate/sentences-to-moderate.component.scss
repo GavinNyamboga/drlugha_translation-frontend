@@ -1,0 +1,14 @@
+@import "../moderate.component.scss";
+:host {
+	min-width: 70%;
+}
+
+.moderate-page{
+  min-width: 600px;
+}
+
+@media screen and (max-width: 600px) {
+  .moderate-page{
+    min-width: 100%;
+  }
+}

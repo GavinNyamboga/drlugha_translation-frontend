@@ -1,0 +1,87 @@
+<form [formGroup]="createBatchForm" (ngSubmit)="createBatch()">
+    <div class="row" >
+
+        <div class="col-12 col-md-6 my-1">
+            <label for="source">Source</label>
+            <input id="source"
+                   formControlName="source"
+                   class="form-control"
+                   [ngClass]="{'is-invalid': f['source'].invalid && f['source'].touched}"
+                   type="text">
+            <div *ngIf="f['source'].invalid && f['source'].touched" class="invalid-feedback">
+                <div *ngIf="f['source'].errors.required">Source is required</div>
+            </div>
+        </div>
+
+        <div class="col-12 col-md-6 my-1">
+            <label for="link">Link</label>
+            <input id="link"
+                   formControlName="linkUrl"
+                   class="form-control"
+                   [ngClass]="{'is-invalid': f['linkUrl'].invalid && f['linkUrl'].touched}"
+                   type="text">
+            <div *ngIf="f['linkUrl'].invalid && f['linkUrl'].touched" class="invalid-feedback">
+                <div *ngIf="f['linkUrl'].errors.required">Link is required</div>
+            </div>
+        </div>
+
+        <div class="col-12 my-1">
+            <label for="description">Description</label>
+            <textarea
+                    id="description"
+                    formControlName="description"
+                    class="form-control"
+                    [ngClass]="{'is-invalid': f['description'].invalid && f['description'].touched}"
+                    type="text">
+            </textarea>
+            <div *ngIf="f['description'].invalid && f['description'].touched" class="invalid-feedback">
+                <div *ngIf="f['description'].errors.required">Description is required</div>
+            </div>
+        </div>
+
+        <div class="col-12 my-1">
+            <span class="download-sample-link" (click)="downloadExcelSample()">
+                <span class="text-primary fw-bold">Download </span> sample file
+            </span>
+            <input id="file"
+                   class="form-control"
+                   type="file"
+                   (change)="onFileChange($event)"
+                   [ngClass]="{'is-invalid': f['sentences'].invalid && f['sentences'].touched}"
+                   accept=".xlsx, .xls, .csv">
+            <div *ngIf="f['sentences'].invalid && f['sentences'].touched" class="invalid-feedback">
+                <div *ngIf="f['sentences'].errors.required">File is required</div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <button id="submit" class="btn btn-primary mt-2 float-end">Submit</button>
+    </div>
+</form>
+
+<div class="height-constraint mt-2" *ngIf="this.uploadedSentencesFromExcel.length > 0">
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">No.</th>
+                <th scope="col" style="width: 95%">Sentences</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr *ngFor="let sentence of uploadedSentencesFromExcel;let i=index;">
+                <td>{{ i + 1 }}</td>
+                <td>{{ sentence.sentenceText }}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<table #excelTable class="table table-bordered hidden">
+    <thead class="thead-dark">
+    <tr>
+        <th>sentenceText</th>
+    </tr>
+    </thead>
+</table>

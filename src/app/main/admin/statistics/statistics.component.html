@@ -1,0 +1,154 @@
+<div class="card">
+    <div class="card-header">
+        <span class="card-title">User Date Range Statistics</span>
+    </div>
+    <div class="card-body">
+        <section>
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="input-group w-0">
+                        <input
+                                name="datepicker"
+                                class="form-control"
+                                ngbDatepicker
+                                #datepicker="ngbDatepicker"
+                                [autoClose]="'outside'"
+                                (dateSelect)="onDateSelection($event)"
+                                [displayMonths]="2"
+                                [dayTemplate]="rangeSelectionDP"
+                                outsideDays="hidden"
+                                [startDate]="fromDate!"
+                        />
+                        <ng-template #rangeSelectionDP let-date let-focused="focused">
+                            <span
+                                    class="custom-day"
+                                    [class.focused]="focused"
+                                    [class.range]="isRange(date)"
+                                    [class.faded]="isHovered(date) || isInside(date)"
+                                    (mouseenter)="hoveredDate = date"
+                                    (mouseleave)="hoveredDate = null"
+                            >
+                                {{ date.day }}
+                            </span>
+                        </ng-template>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="input-group">
+                        <input
+                            #dpFromDate
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            name="dpFromDate"
+                            id="start-date"
+                            [value]="formatter.format(fromDate)"
+                        />
+                        <div class="input-group-append">
+                            <button
+                                    class="btn btn-outline-secondary feather icon-calendar"
+                                    (click)="datepicker.toggle()"
+                                    type="button"
+                                    rippleEffect
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group ml-sm-2">
+                    <div class="input-group">
+                        <input
+                            #dpToDate
+                            class="form-control"
+                            placeholder="yyyy-mm-dd"
+                            name="dpToDate"
+                            [value]="formatter.format(toDate)"
+                        />
+                        <div class="input-group-append">
+                            <button
+                                    class="btn btn-outline-secondary feather icon-calendar"
+                                    (click)="datepicker.toggle()"
+                                    type="button"
+                                    rippleEffect
+                            ></button>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button
+                            class="btn btn-primary ml-sm-2"
+                            type="button"
+                            [class.loading-btn]="loadingStatistics"
+                            rippleEffect
+                            [disabled]="!fromDate || !toDate"
+                            (click)="generateReport()"
+                    >
+                        <img alt="" src="assets/svg/loading-spinner.svg">
+                        <span>Generate Report</span>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+        <hr>
+
+        <section class="mt-1">
+            <div class="h2">
+                Results
+
+                <button *ngIf="userStatistics.length > 0" class="btn btn-outline-success btn-sm pull-right" (click)="exportToExcel()">Export to Excel</button>
+            </div>
+			<ul ngbNav #navWithIcons="ngbNav" class="nav-tabs" (navChange)="updateTable($event)">
+				<li [ngbNavItem]="'text'">
+					<a ngbNavLink><span [data-feather]="'align-left'"></span>Sentences</a>
+					<ng-template ngbNavContent>
+						<ng-template [ngTemplateOutlet]="dataTable"></ng-template>
+					</ng-template>
+				</li>
+				<li [ngbNavItem]="'audio'">
+					<a ngbNavLink><span [data-feather]="'headphones'"></span>Audios</a>
+					<ng-template ngbNavContent>
+						<ng-template [ngTemplateOutlet]="dataTable"></ng-template>
+					</ng-template>
+				</li>
+			</ul>
+			<div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+            <ng-template #dataTable>
+				<div class="table-responsive">
+					<table class="table table-bordered table-hover" id="user-statistics-report">
+						<thead>
+						<tr>
+							<th>#</th>
+							<th>Username</th>
+							<th>{{ selectedOption == 'text' ? 'Translated' : 'Transcribed'}}</th>
+							<th class="text-center">Moderated</th>
+							<th style="white-space: nowrap" class="text-center">Expert Reviewed</th>
+							<ng-container *ngIf="selectedOption == 'text'">
+								<th class="text-center">Audio Recorded</th>
+								<th class="text-center">Audio Moderated</th>
+							</ng-container>
+						</tr>
+						</thead>
+						<tbody>
+						<tr *ngIf="!userStatistics.length">
+							<td [attr.colspan]="selectedOption == 'text' ? 7 : 5"
+								class="text-center">
+								No data available
+							</td>
+						</tr>
+						<tr *ngFor="let statistic of userStatistics; let statisticsIndex = index">
+							<td>{{ statisticsIndex + 1}}</td>
+							<td>{{ statistic.username }}</td>
+							<td>{{ statistic.sentencesTranslated }}</td>
+							<td>{{ statistic.sentencesModerated }}</td>
+							<td>{{ statistic.sentencesExpertModerated }}</td>
+							<ng-container *ngIf="selectedOption == 'text'">
+								<td>{{ statistic.audiosRecorded }}</td>
+								<td>{{ statistic.audioModerated }}</td>
+							</ng-container>
+						</tr>
+						</tbody>
+					</table>
+				</div>
+			</ng-template>
+        </section>
+    </div>
+</div>

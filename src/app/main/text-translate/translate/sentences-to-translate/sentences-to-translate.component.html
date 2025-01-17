@@ -1,0 +1,54 @@
+<div *ngIf="untranslatedSentences.length > 0; else elseBlock" >
+	<div class="text-translation funny ">
+
+		<div class=" btn1">{{ batchType == BatchType.AUDIO ? 'Transcription' : 'English'}}</div>
+		<svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor"
+			 class="bi bi-arrow-left-right textnow" viewBox="0 0 16 16">
+			<path fill-rule="evenodd"
+				  d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" />
+		</svg>
+		<div class=" btn1">{{ language }}</div>
+	</div>
+
+	<div style="min-height: 68px">
+		<div class="text-card" *ngIf="showSentenceText" @slideInOut>
+			<div class="card text-center info">
+				<div class="card-body">
+					<audio class="audio-width" controls *ngIf="currentAssignment.audioUrl; else showSentence">
+						<source src="{{currentAssignment.audioUrl}}" type="audio/mpeg">
+					</audio>
+					<ng-template #showSentence>
+						<p class="card-text">{{currentAssignment.sentenceText}}</p>
+					</ng-template>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="text-card enterhere">
+		<form [formGroup]="translateForm" (ngSubmit)="saveTranslation(currentAssignment.sentenceId)">
+                            <textarea class="form-control"
+									  rows="5"
+									  [placeholder]="'Enter your ' +(batchType == BatchType.AUDIO ? 'transcription' : 'translation') + ' here'"
+									  formControlName="translatedText"
+									  [ngClass]="{'is-invalid': f['translatedText'].touched && f['translatedText'].invalid}" >
+                            </textarea>
+			<div *ngIf="f['translatedText'].touched && f['translatedText'].invalid" class="invalid-feedback">
+				<small *ngIf="f['translatedText'].errors.required">
+					{{ batchType == BatchType.AUDIO ? 'Transcription' : 'Translated' }} text is required
+				</small>
+			</div>
+			<button type="submit" class="btn btn-outline-primary pull-right mt-2">Next</button>
+		</form>
+	</div>
+</div>
+
+<ng-template #elseBlock>
+	<div class="text-card">
+		<div class="card text-center info">
+			<div class="card-body">
+				<p class="card-text"> No sentences to translate </p>
+			</div>
+		</div>
+	</div>
+</ng-template>
+

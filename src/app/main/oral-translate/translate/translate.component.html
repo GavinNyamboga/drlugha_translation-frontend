@@ -1,0 +1,14 @@
+<div>
+	<ng-container *ngIf="audioAssignment?.unrecordedSentences?.length > 0 || audioAssignment?.recordedSentences.length == 0; else showRecordedSentences">
+		<app-sentences-to-record
+			[sentencesToRecord]="audioAssignment.unrecordedSentences"
+			[language]="audioAssignment.language"
+			[batchDetailsId]="audioAssignment.batchDetailsId">
+		</app-sentences-to-record>
+	</ng-container>
+	<ng-template #showRecordedSentences>
+		<app-batch-voice-translations
+			[recordedSentences]="audioAssignment?.recordedSentences || []">
+		</app-batch-voice-translations>
+	</ng-template>
+</div>

@@ -1,0 +1,28 @@
+<div class="p-5">
+    <div>
+        <div class="row">
+            <div class="col-md-8 offset-md-2">
+                <form [formGroup]="translatorForm" (ngSubmit)="addTranslator()">
+                    <div>
+                        <label class="form-label" for="translator">
+							{{ assigneeTitle }}
+						</label>
+                        <select class="form-control"
+                                id="translator"
+                                formControlName="translator"
+                                [ngClass]="{'is-invalid': f['translator'].touched && f['translator'].invalid}">
+                            <option value=""></option>
+                            <option *ngFor="let user of users" [value]="user.userId">
+                                {{ user.username }}
+                            </option>
+                        </select>
+                        <div *ngIf="f['translator'].touched && f['translator'].invalid" class="invalid-feedback">
+                            <div *ngIf="f['translator'].errors.required">{{ assigneeTitle }} is required</div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-25 mt-4">Assign {{ assigneeTitle }}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

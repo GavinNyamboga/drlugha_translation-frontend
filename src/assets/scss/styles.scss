@@ -1,0 +1,45 @@
+@import 'ngx-toastr/toastr';
+@import "@angular/material/prebuilt-themes/deeppurple-amber.css";
+@import '@core/scss/base/pages/app-todo';
+
+.translate-application {
+  .sidebar-toggle {
+    z-index: 3;
+  }
+
+  .content-area-wrapper {
+    height: calc(var(--vh, 1vh) * 100 - calc(calc(2rem * 1) + 4.45rem + 3.35rem + 1.3rem + 0rem));
+  }
+
+  .todo-checkbox {
+    z-index: 1;
+  }
+
+  .translation-app-list {
+    height: 100% !important;
+  }
+}
+
+.text-card {
+  max-width: 600px;
+  margin: 20px auto auto;
+
+  & > .info{
+    background-color: #544AF454;
+    color: #430497;
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+}
+
+span.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
+}
+

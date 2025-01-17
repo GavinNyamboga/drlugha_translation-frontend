@@ -1,0 +1,101 @@
+<app-batch-details-statistics
+    [language]="batchDetailsReport?.language"
+    [batchType]="batchDetailsReport?.batchType"
+    [batchDetailsStatus]="batchDetailsReport?.batchDetailsStatus">
+</app-batch-details-statistics>
+
+<div class="card">
+    <div class="card-header d-flex flex-row justify-content-between">
+        <h4 class="card-title">
+            Sentences Report <span *ngIf="batchDetailsReport">-
+            {{ batchDetailsReport?.language }}
+            ({{ batchDetailsReport?.completedSentences.length }}/{{ batchDetailsReport?.numberOfSentences }}) -
+            {{ batchDetailsReport?.batchDetailsStatus }}
+        </span>
+        </h4>
+        <div>
+            <button *ngIf="batchDetailsReport && batchDetailsReport?.batchType == BatchType.TEXT"
+                    (click)="open(downloadModal)"
+                    class="btn btn-outline-success btn-sm mr-2">
+                <i data-feather="box"></i>
+                Zip Audio
+            </button>
+
+            <button *ngIf="batchDetailsReport"
+                    (click)="exportToExcel()"
+                    class="btn btn-success btn-sm">
+                <i data-feather="file-text"></i>
+                Export to Excel
+            </button>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered" id="batchDetailsReport">
+                <thead>
+                <tr>
+                    <th style="width: 4%">#</th>
+                    <th style="width: 35%">
+                        {{ batchDetailsReport?.batchType == BatchType.AUDIO ? 'Audio' : 'Sentence' }}
+                    </th>
+                    <th style="width: 35%;">
+                        {{ batchDetailsReport?.batchType == BatchType.AUDIO ? 'Transcription' : 'Translation' }}
+                    </th>
+                    <th class="no-export text-center" *ngIf="batchDetailsReport?.batchType == BatchType.TEXT">
+                        Audio
+                        <span class="text-muted" *ngIf="batchDetailsReport?.batchDetailsStatus == 'Audio Reviewed'">
+                            (Reviewed) <img src="assets/svg/verified.svg" alt="" height="12" width="12"/>
+                        </span>
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container *ngIf="batchDetailsReport?.completedSentences?.length > 0; else showMessage">
+                    <tr *ngFor="let sentence of batchDetailsReport?.completedSentences | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index">
+                        <ng-container *ngIf="sentence.audioUrl">
+                            <td>{{ (page - 1) * pageSize + i + 1 }}</td>
+                            <td>
+                                <span *ngIf="batchDetailsReport?.batchType == BatchType.AUDIO">
+                                    <app-audio-player [audioSrc]="sentence?.transcriptionAudioUrl">
+                                    </app-audio-player>
+                                </span>
+                                <span *ngIf="batchDetailsReport?.batchType == BatchType.TEXT">
+                                    {{ sentence?.sentenceText }}
+                                </span>
+                            </td>
+                            <td>{{ sentence?.translatedText }}</td>
+                            <td class="no-export text-center" *ngIf="batchDetailsReport?.batchType == BatchType.TEXT">
+                                <app-audio-player [audioSrc]="sentence?.audioUrl"></app-audio-player>
+                            </td>
+                        </ng-container>
+                    </tr>
+                </ng-container>
+                <ng-template #showMessage>
+                    <tr>
+                        <td colspan="4" class="text-center">
+                            No sentences found - Kindly making sure that the translator has completed translating all sentences.
+                        </td>
+                    </tr>
+                </ng-template>
+            </table>
+
+            <div class="d-flex justify-content-center mt-2" *ngIf="batchDetailsReport?.completedSentences?.length > pageSize">
+                <ngb-pagination [collectionSize]="batchDetailsReport?.completedSentences?.length"
+                                [pageSize]="pageSize"
+                                [maxSize]="7"
+                                [(page)]="page"  aria-label="Default pagination">
+                    <ng-template ngbPaginationPrevious>
+                        <span [data-feather]="'chevron-left'" [size]="'18'" [class]="'font-weight-bolder'"></span>
+                    </ng-template>
+                    <ng-template ngbPaginationNext>
+                        <span [data-feather]="'chevron-right'" [size]="'18'" [class]="'font-weight-bolder'"></span>
+                    </ng-template>
+                </ngb-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #downloadModal let-modal>
+    <app-download-audio-files [modal]="modal" [totalFiles]="totalAudioFiles"></app-download-audio-files>
+</ng-template>

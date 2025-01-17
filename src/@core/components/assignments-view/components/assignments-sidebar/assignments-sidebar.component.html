@@ -1,0 +1,70 @@
+<!-- Main Sidebar -->
+<div class="main-sidebar sidebar">
+	<div class="sidebar-content batch-details-sidebar">
+		<div class="todo-app-menu" [perfectScrollbar]>
+			<ng-container *ngIf="batchDetails">
+				<div class="px-2 d-flex justify-content-between align-items-center position-sticky position-top-0" style="z-index: 999; background: #fff">
+					<h6 class="section-label my-2">Assignments</h6>
+					<div class="d-none d-lg-block"><i data-feather="check-circle"></i></div>
+					<div (click)="toggleSidebar()" class="d-block d-lg-none font-large-1"><i data-feather="x"></i></div>
+				</div>
+
+				<div class="sidebar-menu-list">
+					<div class="list-group list-group-filters">
+						<ng-container *ngIf="showTranscriptionAssignments$ | async; else showTranslationAssignment">
+							<ngb-accordion [destroyOnHide]="false" [closeOthers]="true" activeIds="panelBorderBottom1">
+								<ngb-panel id="panelBorderBottom1">
+									<ng-template ngbPanelTitle>
+										<span>Translation Assignments</span>
+									</ng-template>
+									<ng-template ngbPanelContent>
+										<ng-container *ngFor="let batchDetail of batchDetails.translationAssignments">
+											<app-sidebar-link
+												[batchDetail]="batchDetail">
+											</app-sidebar-link>
+										</ng-container>
+										<ng-container *ngIf="!batchDetails.translationAssignments || batchDetails.translationAssignments.length === 0">
+											<ng-container *ngTemplateOutlet="noAssignmentsMessage"></ng-container>
+										</ng-container>
+									</ng-template>
+								</ngb-panel>
+								<ngb-panel id="panelBorderBottom2">
+									<ng-template ngbPanelTitle>
+										<span>Transcription Assignments</span>
+									</ng-template>
+									<ng-template ngbPanelContent>
+										<ng-container *ngFor="let batchDetail of batchDetails.transcriptionAssignments">
+											<app-sidebar-link
+												[batchDetail]="batchDetail">
+											</app-sidebar-link>
+										</ng-container>
+										<ng-container *ngIf="!batchDetails.transcriptionAssignments || batchDetails.transcriptionAssignments.length === 0">
+											<ng-container *ngTemplateOutlet="noAssignmentsMessage"></ng-container>
+										</ng-container>
+									</ng-template>
+								</ngb-panel>
+							</ngb-accordion>
+						</ng-container>
+						<ng-template #showTranslationAssignment>
+							<ng-container *ngFor="let batchDetail of batchDetails.translationAssignments">
+								<app-sidebar-link
+									[batchDetail]="batchDetail">
+								</app-sidebar-link>
+							</ng-container>
+							<ng-container *ngIf="!batchDetails.translationAssignments || batchDetails.translationAssignments.length === 0">
+								<ng-container *ngTemplateOutlet="noAssignmentsMessage"></ng-container>
+							</ng-container>
+						</ng-template>
+					</div>
+				</div>
+			</ng-container>
+		</div>
+	</div>
+</div>
+<!--/ Main Sidebar -->
+
+<ng-template #noAssignmentsMessage>
+	<div class="alert alert-info m-3 pb-1">
+		<p class="text-center">No previous assignments found</p>
+	</div>
+</ng-template>

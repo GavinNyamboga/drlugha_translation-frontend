@@ -1,0 +1,65 @@
+<div>
+	<div *ngIf="unreviewedSentences.length > 0; else elseBlock" style="margin-bottom: 2em">
+		<div class="funny">
+
+			<div class=" btn1">{{ batchType == BatchType.AUDIO ? 'Transcription' : originalLanguage}}</div>
+			<div class="d-flex flex-row align-items-center">
+				<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor"
+					 class="bi bi-arrow-left-right textnow" viewBox="0 0 16 16">
+					<path fill-rule="evenodd"
+						  d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" />
+				</svg>
+			</div>
+			<div class=" btn1">{{ language }}</div>
+		</div>
+		<div class="text-success d-flex justify-content-center align-items-center">
+			<div class="fw-bold">
+				<span>{{  currentIndex + 1 }}/</span>
+				<span>{{ unreviewedSentences.length }}</span>
+			</div>
+		</div>
+		<div class="card text-center card1">
+			<div class="card-body">
+				<p class="card-text original" *ngIf="batchType == BatchType.TEXT" >
+					{{currentAssignment.sentenceText}}
+				</p>
+				<app-audio-player *ngIf="batchType == BatchType.AUDIO"
+								  [audioSrc]="currentAssignment.audioLink">
+				</app-audio-player>
+			</div>
+		</div>
+		<div class="card text-center card2 d-flex align-items-center">
+			<div class="card-body">
+				<p class="card-text said text-dark">
+					{{currentAssignment.translatedSentenceText}}
+				</p>
+			</div>
+		</div>
+		<form [formGroup]="commentFormGroup">
+			<div class="card2 comment-section" [class.active]="rejectTranslationActive">
+                        <textarea class="form-control"
+								  formControlName="comment"
+								  id="comment"
+								  placeholder="Enter reason for rejection here..."
+								  [ngClass]="{'is-invalid': f['comment'].invalid && f['comment'].touched}"
+								  rows="3" >
+                        </textarea>
+			</div>
+			<div class="d-flex justify-content-between buttons" >
+				<a *ngIf="rejectTranslationActive" (click)="updateRejectTranslationActiveValue()" class="app-btn-secondary btn">Cancel</a>
+				<button (click)="rejectTranslationActive ? rejectFunction() : updateRejectTranslationActiveValue()"
+						class="btn btn-outline-danger">Reject</button>
+				<a *ngIf="!rejectTranslationActive" (click)="verifyFunction(currentAssignment.translatedSentenceId)" class="btn btn-outline-success">Verify</a>
+			</div>
+		</form>
+	</div>
+	<ng-template #elseBlock >
+		<div class="text-card">
+			<div class="card text-center info">
+				<div class="card-body">
+					<p class="card-text" style="color: #430497;">No sentences to moderate/verify</p>
+				</div>
+			</div>
+		</div>
+	</ng-template>
+</div>

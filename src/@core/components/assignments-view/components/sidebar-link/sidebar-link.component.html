@@ -1,0 +1,17 @@
+<a [routerLink]="defaultUrl$ | async"
+   [queryParams]="{ batchDetailsId: batchDetail.batchDetailsId }"
+   [routerLinkActive]="'active'"
+   class="list-group-item list-group-item-action">
+	<span class="align-middle">
+		{{ batchDetail.batchSource }}
+		({{ batchDetail.language }})
+	</span>
+	<div class="clearfix"></div>
+	<span class="badge badge-pill mt-1"
+		  [class.badge-light-success]="completed"
+		  [class.badge-light-warning]="!completed">
+		<ng-container *ngIf="badgeLabels$ | async as labels">
+			{{ completed ? labels.completed : labels.pending }}
+		</ng-container>
+	</span>
+</a>

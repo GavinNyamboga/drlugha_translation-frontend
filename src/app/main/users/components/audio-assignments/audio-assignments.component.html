@@ -1,0 +1,65 @@
+<div *ngIf="userBatchDetailsStats?.transcriber?.length">
+	<div class="h4 mb-2">Audio Transcription</div>
+	<div class="row match-height">
+		<div class="col-md-3" *ngFor="let translatedBatch of userBatchDetailsStats.transcriber">
+			<div class="card">
+				<div class="card-header">
+					<h5>{{ translatedBatch.source }}</h5>
+				</div>
+				<div class="card-body">
+					<p>Total Audios: {{ translatedBatch.totalSentences }}</p>
+					<p>Transcribed Audios: {{ translatedBatch.sentencesTranslated}}</p>
+					<p>Approved Transcriptions: {{ translatedBatch.sentencesApproved}}</p>
+					<p>Rejected Transcriptions: {{ translatedBatch.sentencesRejected}}</p>
+					<div class="progress-wrapper mb-1">
+						<div class="mb-25">Progress&hellip; {{getProgressInPercentage(translatedBatch.sentencesTranslated, translatedBatch.totalSentences)}}%</div>
+						<ngb-progressbar type="primary" [value]="getProgressInPercentage(translatedBatch.sentencesTranslated, translatedBatch.totalSentences)"></ngb-progressbar>
+					</div>
+					<button *ngIf="canViewSentences" [routerLink]="['/main/reports/batch-details', translatedBatch.batchDetailsId]" class="btn btn-outline-primary">View Sentences</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="userBatchDetailsStats?.transcriptionModerator?.length">
+	<div class="h4 mb-2">Transcription Moderation</div>
+	<div class="row match-height">
+		<div class="col-md-3" *ngFor="let translatedBatch of userBatchDetailsStats.transcriptionModerator">
+			<div class="card">
+				<div class="card-header">
+					<h5>{{ translatedBatch.source }}</h5>
+				</div>
+				<div class="card-body">
+					<p>Total Audios: {{ translatedBatch.totalSentences }}</p>
+					<p>Approved Transcriptions: {{ translatedBatch.sentencesApproved}}</p>
+					<p>Rejected Transcriptions: {{ translatedBatch.sentencesRejected}}</p>
+					<div class="progress-wrapper mb-1">
+						<div class="mb-25">Progress&hellip; {{getProgressInPercentage(translatedBatch.sentencesApproved + translatedBatch.sentencesRejected, translatedBatch.totalSentences)}}%</div>
+						<ngb-progressbar type="primary" [value]="getProgressInPercentage(translatedBatch.sentencesApproved + translatedBatch.sentencesRejected, translatedBatch.totalSentences)"></ngb-progressbar>
+					</div>
+					<button *ngIf="canViewSentences" [routerLink]="['/main/reports/batch-details', translatedBatch.batchDetailsId]" class="btn btn-outline-primary">View Sentences</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div *ngIf="userBatchDetailsStats?.transcriptionExpert?.length">
+	<div class="h4 mb-2">Expert Transcription Review</div>
+	<div class="row match-height">
+		<div class="col-md-3" *ngFor="let translatedBatch of userBatchDetailsStats.transcriptionExpert">
+			<div class="card">
+				<div class="card-header">
+					<h5>{{ translatedBatch.source }}</h5>
+				</div>
+				<div class="card-body">
+					<p>Total Audios: {{ translatedBatch.totalSentences }}</p>
+					<p>Approved Transcriptions: {{ translatedBatch.sentencesExpertApproved}}</p>
+					<p>Rejected Transcriptions: {{ translatedBatch.sentencesExpertRejected}}</p>
+					<button *ngIf="canViewSentences" [routerLink]="['/main/reports/batch-details', translatedBatch.batchDetailsId]" class="btn btn-outline-primary">View Sentences</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

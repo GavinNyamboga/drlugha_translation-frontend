@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <h4 class="modal-title" id="modal-basic-title">Downloading Audio</h4>
+    <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+<div class="modal-body p-0">
+    <div class="text-muted font-small-2 text-center pt-1">
+        <p class="mb-0">Downloading {{ totalFiles }} audio files</p>
+    </div>
+	<div [hidden]="totalDownloadProgress == 0" id="goalChartoptions" class="mb-1 pt-1" #goalChartRef>
+		<app-download-progress-chart
+			[totalProgress]="totalDownloadProgress$ | async">
+		</app-download-progress-chart>
+	</div>
+	<div *ngIf="totalDownloadProgress == 0" class="text-center pt-1 d-flex flex-column justify-content-center align-items-center" style="height: 200px">
+		<img src="assets/svg/bars.svg" width="50">
+		<p class="pt-3">
+			Kick back and relax while we <br/>
+			download your audio files.
+		</p>
+	</div>
+	<div class="progress-wrapper" *ngIf="(autoCloseProgress$ | async)  != null">
+		<ngb-progressbar type="primary" class="progress-bar-primary" [value]="autoCloseProgress$ | async"></ngb-progressbar>
+	</div>
+</div>

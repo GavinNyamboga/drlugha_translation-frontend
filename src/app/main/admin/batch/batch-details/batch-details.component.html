@@ -1,0 +1,31 @@
+<div class="card mb-5">
+    <div class="card-header">
+        <h4>Batch Details - {{ batchType}}</h4>
+    </div>
+    <div class="card-body">
+        <mat-tab-group (selectedTabChange)="updateSelectedLanguage($event)">
+            <ng-container *ngFor="let language of languages">
+                <mat-tab [label]="language.name">
+                    <ng-container *ngIf="!loadingBatchDetails">
+                        <app-assign-translator
+                                *ngIf="!selectedBatchDetail"
+                                [users]="users"
+                                [batchId]="batchId"
+								[batchType]="batchType"
+                                [selectedLanguage]="selectedLanguage"
+                                (addBatchDetails)="addBatchDetails($event)">
+                        </app-assign-translator>
+                        <app-assign-verifiers
+                                *ngIf="selectedBatchDetail"
+                                [batchId]="batchId"
+                                [users]="users"
+								[batchType]="batchType"
+                                [batchDetail]="selectedBatchDetail"
+                                (addBatchDetails)="addBatchDetails($event)">
+                        </app-assign-verifiers>
+                    </ng-container>
+                </mat-tab>
+            </ng-container>
+        </mat-tab-group>
+    </div>
+</div>

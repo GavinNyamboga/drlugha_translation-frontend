@@ -1,0 +1,104 @@
+<div *ngIf="isEditable" class="alert alert-success d-flex align-items-center p-2 mb-0" style="border-radius: 0">
+	<div><span ></span> This assignment can be marked as complete</div>
+	<button class="btn btn-sm btn-success pull-right ml-auto"
+			(click)="confirmMarkAsTranslated()">
+		Mark As Complete {{ '✓' }}
+	</button>
+</div>
+<div class="table-responsive">
+	<table class="table sentences-table table-bordered table-striped fs-6">
+		<thead>
+		<tr>
+			<th style="width: 4%">#</th>
+			<th *ngIf="batchType == BatchType.TEXT">Sentence</th>
+			<th *ngIf="batchType == BatchType.AUDIO">Audio</th>
+			<th>{{ batchType == BatchType.AUDIO ? 'Transcription Text' : 'Translation Text' }}</th>
+			<th>Status</th>
+			<th *ngIf="hasRejectedSentences">Rejection Reason</th>
+			<th class="text-center" style="width: 15%" *ngIf="isEditable">Actions</th>
+		</tr>
+		</thead>
+		<tbody *ngIf="translatedSentencesForm" [formGroup]="translatedSentencesForm">
+		<ng-container formArrayName="translatedSentences">
+			<ng-container *ngFor="let translatedSentence of translatedSentences | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let sentenceIndex = index">
+				<tr [formGroupName]="(page - 1) * pageSize + sentenceIndex">
+					<td>{{ (page - 1) * pageSize + sentenceIndex + 1 }}</td>
+					<td *ngIf="batchType == BatchType.TEXT">{{ translatedSentence.sentence.sentenceText }}</td>
+					<td *ngIf="batchType == BatchType.AUDIO">
+						<audio controls>
+							<source [src]="translatedSentence.sentence.audioUrl" type="audio/mpeg">
+						</audio>
+					</td>
+					<td *ngIf="editableSentenceRow[translatedSentence.translatedSentenceId]">
+                                        <textarea class="form-control"
+												  rows="3"
+												  formControlName="translatedText">
+                                        </textarea>
+					</td>
+					<td *ngIf="!editableSentenceRow[translatedSentence.translatedSentenceId]">
+						{{ translatedSentence.translatedText }}
+					</td>
+
+					<td>
+						<small *ngIf="translatedSentence.approved == null" class="badge badge-warning text-secondary bg-opacity-75">
+							<span class="bi bi-hourglass me-1"></span> Pending Review
+						</small>
+						<small *ngIf="translatedSentence.approved" class="badge badge-success bg-opacity-75">
+							<span class="bi bi-check-circle me-1"></span> Approved
+						</small>
+						<small *ngIf="translatedSentence.approved == false" class="badge badge-danger">
+							<span class="bi bi-x-circle me-1"></span> Rejected
+						</small>
+					</td>
+
+					<td *ngIf="hasRejectedSentences">
+						<div *ngIf="translatedSentence.moderatorComment">
+							{{ translatedSentence.moderatorComment }} - <small class="fw-bold">Moderator</small>
+						</div>
+						<div style="border-bottom: 1px solid grey; margin: 0 4px 0 4px" *ngIf="translatedSentence.moderatorComment && translatedSentence.expertComment"></div>
+						<div *ngIf="translatedSentence.expertComment">
+							{{ translatedSentence.expertComment }} - Expert
+						</div>
+					</td>
+
+					<ng-container *ngIf="isEditable">
+						<td>
+							<div *ngIf="!editableSentenceRow[translatedSentence.translatedSentenceId] && !translatedSentence.approved"  class="d-flex flex-row justify-content-center align-items-center">
+								<button (click)="enableSentenceRowEdit(translatedSentence)" type="button" class="btn btn-primary btn-sm me-1">Edit</button>
+							</div>
+							<div *ngIf="editableSentenceRow[translatedSentence.translatedSentenceId]" class="d-flex flex-row justify-content-center align-items-center">
+								<button (click)="enableSentenceRowEdit(translatedSentence)"
+										type="button"
+										class="btn btn-light btn-sm me-1">
+									Cancel
+								</button>
+
+								<button (click)="updateTranslatedSentence((page - 1) * pageSize + sentenceIndex)"
+										type="button"
+										class="btn btn-success btn-sm">
+									Save
+									<i class="bi bi-check-circle"></i>
+								</button>
+							</div>
+						</td>
+					</ng-container>
+				</tr>
+			</ng-container>
+		</ng-container>
+		</tbody>
+	</table>
+</div>
+<div class="d-flex justify-content-center mt-2" *ngIf="translatedSentences?.length > pageSize">
+	<ngb-pagination [collectionSize]="translatedSentences.length"
+					[pageSize]="pageSize"
+					[maxSize]="7"
+					[(page)]="page"  aria-label="Default pagination">
+		<ng-template ngbPaginationPrevious
+		><span [data-feather]="'chevron-left'" [size]="'18'" [class]="'font-weight-bolder'"></span>
+		</ng-template>
+		<ng-template ngbPaginationNext
+		><span [data-feather]="'chevron-right'" [size]="'18'" [class]="'font-weight-bolder'"></span
+		></ng-template>
+	</ngb-pagination>
+</div>
+

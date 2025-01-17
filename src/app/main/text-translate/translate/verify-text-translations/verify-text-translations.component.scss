@@ -1,0 +1,8 @@
+.sentences-table{
+  transition: all 0.3s ease;
+  tbody {
+    tr:hover{
+      background-color: aliceblue;
+    }
+  }
+}

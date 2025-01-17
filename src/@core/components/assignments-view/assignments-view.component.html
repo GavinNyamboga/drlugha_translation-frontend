@@ -1,0 +1,35 @@
+<div class="content-area-wrapper container-xxl p-0">
+	<core-sidebar
+		class="sidebar-left expanded"
+		name="batch-details-sidebar"
+		overlayClass="body-content-overlay"
+		collapsibleSidebar="bs-gt-lg"
+		[ngClass]="{'show': showSidebar}">
+		<app-assignments-sidebar
+			[batchDetails]="batchDetails"
+			[defaultUrl]="defaultUrl"
+			(sidebarToggle)="toggleSidebar()">
+		</app-assignments-sidebar>
+	</core-sidebar>
+
+	<!-- content-right -->
+	<div class="content-right">
+		<div class="content-wrapper container-xxl p-0">
+			<div class="content-body">
+				<app-sidebar-content
+					[title]="title">
+					<div toggle-button>
+						<div (click)="toggleSidebar()" >
+							<span class="d-block d-lg-none font-medium-5 ml-1" [data-feather]="'menu'"></span>
+						</div>
+					</div>
+					<ng-container content>
+						<ng-content></ng-content>
+					</ng-container>
+				</app-sidebar-content>
+
+			</div>
+		</div>
+	</div>
+	<!--/ content-right -->
+</div>

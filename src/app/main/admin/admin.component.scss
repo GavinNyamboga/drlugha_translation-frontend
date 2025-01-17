@@ -1,0 +1,58 @@
+.body{
+    overflow-x: hidden;
+}
+.bodyadmin{
+    background-image: url("/assets/images/vector\ 3.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+
+    div.text-center{
+        margin-top:8rem;
+    }
+}
+
+.width{
+    max-width: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-inline: auto;
+}
+
+.bgunique{
+    background-color: 
+    rgba(152, 249, 255, 1);
+    border-radius: 25px;
+    // margin-block: auto;
+    max-width: 150px;
+
+}
+.bglight{
+    background-color: rgba(240, 248, 255, 0.575);
+}
+.mb-custom{
+    margin-bottom: 6rem;
+}
+
+.height-constraint{
+    overflow-y: auto;
+}
+.table-responsive {
+    max-height:300px;
+}
+.em1{
+    margin-bottom: 10em;
+}
+.em2{
+    margin-bottom: 4em;
+}
+.em3{
+    margin-bottom: 9em;
+}
+
+.back{
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+}

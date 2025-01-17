@@ -1,0 +1,8 @@
+.progress .progress-bar:last-child {
+	border-top-right-radius: unset;
+	border-bottom-right-radius: unset;
+}
+
+.progress {
+	border-top-left-radius: 0
+}

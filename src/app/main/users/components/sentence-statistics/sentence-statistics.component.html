@@ -1,0 +1,65 @@
+<div class="row">
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="font-weight-bolder mb-1">{{ statsPerUser?.totalSentencesTranslated }}</h2>
+					<p class="card-text">Translated Sentences</p>
+				</div>
+				<div class="avatar bg-light-primary p-50 m-0">
+					<div class="avatar-content">
+						<i [data-feather]="'pen-tool'" class="font-medium-5"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header" style="padding: 1.3rem">
+				<div class="d-flex flex-column">
+					<h2 class="font-weight-bolder mb-0">{{ statsPerUser?.totalSentencesModerated + statsPerUser?.totalSentencesExpertModerated }}</h2>
+					<p class="card-text">
+						<span><small>({{statsPerUser?.totalSentencesExpertModerated}} as an expert)</small></span><br>
+						<span>Moderated Sentences</span>
+					</p>
+				</div>
+				<div class="avatar bg-light-success p-50 m-0">
+					<div class="avatar-content">
+						<i [data-feather]="'check-circle'" class="font-medium-5"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="font-weight-bolder mb-1">{{ statsPerUser?.totalAudiosRecorded }}</h2>
+					<p class="card-text">Audio Recorded</p>
+				</div>
+				<div class="avatar bg-light-danger p-50 m-0">
+					<div class="avatar-content">
+						<i [data-feather]="'mic'" class="font-medium-5"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="font-weight-bolder mb-1">{{ statsPerUser?.totalAudiosModerated }}</h2>
+					<p class="card-text">Audio Moderated</p>
+				</div>
+				<div class="avatar bg-light-warning p-50 m-0">
+					<div class="avatar-content">
+						<i [data-feather]="'headphones'" class="font-medium-5"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

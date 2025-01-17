@@ -1,0 +1,23 @@
+<app-assignments-view
+	[title]="title"
+	[defaultUrl]="'/main/text-translate/translate/sentences'"
+	[batchDetails]="batchDetailAssignments">
+	<ng-container *ngIf="showTranslationView; else showTranslatedSentences">
+		<app-sentences-to-translate
+			[batchDetailsId]="batchDetailsId || translationAssignment?.batchDetailsId"
+			[language]="translationAssignment?.language"
+			[batchType]="translationAssignment?.batchType"
+			[untranslatedSentences]="translationAssignment?.pendingTasks || []" >
+		</app-sentences-to-translate>
+	</ng-container>
+	<ng-template #showTranslatedSentences>
+		<app-verify-text-translations
+			style="width: 100%"
+			[batchDetailsId]="batchDetailsId || translationAssignment?.batchDetailsId"
+			[translatedSentences]="translationAssignment?.translatedSentences || []"
+			[batchType]="translationAssignment?.batchType"
+			[isEditable]="!selectedBatchDetails?.translated"
+			(markedAsTranslated)="markAsTranslated()">
+		</app-verify-text-translations>
+	</ng-template>
+</app-assignments-view>

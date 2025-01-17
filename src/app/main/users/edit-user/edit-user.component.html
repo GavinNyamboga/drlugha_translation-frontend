@@ -1,0 +1,19 @@
+<div class="">
+	<div class="card">
+		<div class="card-body">
+			<h1 class="card-title">Update Profile</h1>
+			<ng-container *ngIf="user">
+				<app-user-form
+					[user]="user"
+					[mode]="'edit'"
+					(formSubmitted)="updateUserDetails($event)">
+					<button (click)="navigateBack()" type="button" class="btn btn-light mt-2 mr-2">Back</button>
+					<button [disabled]="updatingUser" id="submit" class="btn btn-primary mt-2 pull-right">
+						<span *ngIf="updatingUser" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+						Submit
+					</button>
+				</app-user-form>
+			</ng-container>
+		</div>
+	</div>
+</div>

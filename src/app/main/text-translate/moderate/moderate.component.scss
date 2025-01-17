@@ -1,0 +1,170 @@
+.bodyoralverification{
+    background-image: url("/assets/images/vector\ 3.png");
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+.back{
+     position: absolute;
+     top: 20px;
+     left:20px
+}
+.oralverhead{
+    display:flex;
+    justify-content: center;
+    align-items: center;
+}
+.backcol{
+    background: rgba(84, 74, 244, 0.33);
+
+}
+.cardmessage{
+    display: flex;
+    justify-content: center;
+    margin-inline: auto;
+    // max-width: 60rem;
+}
+.next {
+    position: absolute;
+    right: 10px;
+    border-radius: 24.9px;
+    border: 1px solid rgba(84, 74, 244, 0.8);
+    color: rgba(84, 74, 244, 0.8);
+    font-weight: 500;
+    padding-inline: 30px;
+    padding-block: 6px;
+    margin-block: .5em;
+
+}
+
+.display {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // background-color: white;
+    width: 300px;
+
+    .btn1 {
+        padding-block: 20px;
+        padding-inline: 40px;
+        background: rgba(84, 74, 244, 0.33);
+        // background: radial-gradient(circle, rgba(72, 222, 255, 0.5) 0%, rgba(110, 191, 244, 0.112) 35%, rgba(72, 222, 255, 0.5) 100%);
+        border-radius: 4px;
+        width: 25rem;
+
+    }
+}
+
+.btn1 {
+    // width: 18rem;
+    padding-block: 14px;
+    padding-inline: 14px;
+    background: rgba(131, 128, 170, 0.774);
+    // background: radial-gradient(circle, rgba(72, 222, 255, 0.5) 0%, rgba(110, 191, 244, 0.112) 35%, rgba(72, 222, 255, 0.5) 100%);
+    border-radius: 4px;
+    // width: 25rem;
+}
+
+.funny {
+    background: rgba(131, 128, 170, 0.774);
+    color: white;
+    display: flex;
+    margin: 10px;
+    margin-inline: auto;
+    border-radius: 8px;
+    max-width: 600px;
+    justify-content: center;
+    text-align: center;
+
+    .btn1 {
+        background-color: unset;
+        padding-block: .5em;
+        font-weight: 700;
+    }
+
+}
+.card1{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    max-width: 600px;
+    margin-top:1rem;
+    margin-inline: auto;
+
+    background-color:rgba(84, 74, 244, 0.33); 
+}
+.card2{
+    
+    display: flex;
+    max-width: 600px;
+    align-items: center;
+    justify-content: center;
+    margin-top:1rem;
+    margin-inline: auto;
+    
+
+}
+.buttons{
+    margin-top: 1rem;
+    margin-inline: auto;
+    
+    max-width: 600px;
+    .btn4{
+        border: 1px solid rgba(84, 74, 244, 0.8);
+        border-radius: 24.9px;
+        color: rgba(84, 74, 244, 0.8);
+        font-weight: 500;
+        padding-inline: 30px;
+        padding-block: 6px;
+        margin-block: .5em;
+        right:10px;
+    }
+
+    .btn3{
+        border: 1px solid rgba(213, 43, 30, 1);
+        border-radius: 24.9px;
+        color: rgba(213, 43, 30, 1);
+        font-weight: 500;
+        padding-inline: 30px;
+        padding-block: 6px;
+        margin-block: .5em;
+    }
+
+    .app-btn-secondary{
+        border: 1px solid rgba(131, 128, 170, 0.774);
+        border-radius: 24.9px;
+        color: rgba(131, 128, 170, 0.774);
+        font-weight: 500;
+        padding-inline: 30px;
+        padding-block: 6px;
+        margin-block: .5em;
+    }
+}
+
+.comment-section{
+    opacity: 0;
+    height: 0;
+    transition: all 0.5s ease-in-out;
+    &.active{
+        opacity: 1;
+        height: 100%;
+    }
+
+    textarea{
+        height: 0;
+    }
+
+    &.active textarea{
+        height: 100px;
+    }
+
+}
+
+@media screen and (min-width:480px) {   
+    .original{
+        font-size: x-large;
+       }
+       .said{
+        font-size: x-large;
+       }  
+}

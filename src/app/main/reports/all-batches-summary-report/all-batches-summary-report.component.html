@@ -1,0 +1,284 @@
+<div class="row" *ngIf="isAdmin">
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="font-weight-bolder mb-1">{{ totalStats?.totalSentences || '-' }}</h2>
+                    <p class="card-text">Uploaded Sentences</p>
+                </div>
+                <div class="avatar bg-light-primary p-50 m-0">
+                    <div class="avatar-content">
+                        <i [data-feather]="'upload-cloud'" class="font-medium-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="font-weight-bolder mb-1">{{ totalStats?.totalTranslatedSentences || '-' }}</h2>
+                    <p class="card-text">Translated Sentences</p>
+                </div>
+                <div class="avatar bg-light-success p-50 m-0">
+                    <div class="avatar-content">
+                        <i [data-feather]="'pen-tool'" class="font-medium-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="font-weight-bolder mb-1">{{ totalStats?.totalAudios || '-' }}</h2>
+					<p class="card-text">Uploaded Audios</p>
+				</div>
+				<div class="avatar bg-light-danger p-50 m-0">
+					<div class="avatar-content">
+						<i [data-feather]="'upload'" class="font-medium-5"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-3 col-sm-6 col-12">
+		<div class="card">
+			<div class="card-header">
+				<div>
+					<h2 class="font-weight-bolder mb-1">{{ totalStats?.totalTranscribedAudios || '-' }}</h2>
+					<p class="card-text">Transcribed Audios</p>
+				</div>
+				<div class="avatar bg-light-info p-50 m-0">
+					<div class="avatar-content">
+						<i [data-feather]="'headphones'" class="font-medium-5"></i>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card mb-5">
+    <div class="card-header">
+        <h2 class="d-flex justify-content-center">
+			{{ isAdmin ? 'Manage Reports' : 'Reports per batch language' }}
+		</h2>
+    </div>
+    <div class="card-body">
+		<ul ngbNav #navWithIcons="ngbNav" class="nav-tabs" (navChange)="updateTable($event)">
+			<li [ngbNavItem]="'text'">
+				<a ngbNavLink><span [data-feather]="'align-left'"></span>Sentences</a>
+				<ng-template ngbNavContent>
+					<ng-template [ngTemplateOutlet]="dataTable"></ng-template>
+				</ng-template>
+			</li>
+			<li [ngbNavItem]="'audio'">
+				<a ngbNavLink><span [data-feather]="'headphones'"></span>Audios</a>
+				<ng-template ngbNavContent>
+					<ng-template [ngTemplateOutlet]="dataTable"></ng-template>
+				</ng-template>
+			</li>
+			<li [ngbNavItem]="'text_feedback'">
+				<a ngbNavLink><span [data-feather]="'headphones'"></span>User Feedback</a>
+				<ng-template ngbNavContent>
+					<ng-template [ngTemplateOutlet]="dataTable"></ng-template>
+				</ng-template>
+			</li>
+		</ul>
+		<div [ngbNavOutlet]="navWithIcons" class="mt-2"></div>
+        <ng-template #dataTable>
+			<div class="row">
+				<div class="col-md-6 col-12">
+					<div class="d-flex justify-content-between align-items-center m-1">
+						<label class="d-flex align-items-center"
+						>Show
+							<ng-select style="width: 70px" class="mx-25" (ngModelChange)="resetCurrentPage()" [(ngModel)]="pageSize" [clearable]="false">
+								<ng-option value="25">25</ng-option>
+								<ng-option value="50">50</ng-option>
+								<ng-option value="100">100</ng-option>
+								<ng-option value="250">250</ng-option>
+							</ng-select>
+							entries</label
+						>
+					</div>
+				</div>
+				<div class="col-md-6 col-12 d-flex justify-content-md-end">
+					<div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
+						<label class="d-flex align-items-center"
+						>Search<input
+							type="search"
+							placeholder="Search"
+							class="form-control ml-25"
+							(keyup)="filterUpdate($event)"
+							(search)="filterUpdate($event)"
+						/></label>
+					</div>
+				</div>
+			</div>
+			<div class="table-responsive">
+				<table class="table table-striped table-hover table-bordered">
+					<thead>
+						<tr>
+							<th rowspan="2">#</th>
+							<th rowspan="2">Source</th>
+							<th rowspan="2" style="max-width: 10%">Language</th>
+							<th rowspan="2">Status</th>
+							<th rowspan="2">
+								{{ (selectedOption == 'text_feedback'|| selectedOption ==  'text') ? 'Total Sentences' : 'Total Audios' }}
+							</th>
+							<th [attr.colspan]="1 + extraColSpan" class="text-center">
+								{{ (selectedOption == 'text_feedback' || selectedOption == 'text') ? 'Translation' : 'Transcription' }}
+							</th>
+							<th [attr.colspan]="3 + extraColSpan" class="text-center">{{((selectedOption == 'text_feedback' || selectedOption == 'text') ? 'Text Moderation' : 'Audio Moderation')}}</th>
+							<th [attr.colspan]="6 + extraColSpan" class="text-center">Expert Review (10%)</th>
+							<!-- <th *ngIf="selectedOption == 'audio'" [attr.colspan]="3 + extraColSpan" class="text-center">Audio Recording</th>
+							<th *ngIf="selectedOption == 'audio'" [attr.colspan]="3 + extraColSpan" class="text-center">Audio Moderation</th> -->
+							<th *ngIf="isAdmin" rowspan="2" style="width: 100px;" class="text-center">Action</th>
+						</tr>
+						<tr>
+							<th *ngIf="isAdmin">Translator</th>
+							<th>Translated</th>
+							<th *ngIf="isAdmin">Moderator</th>
+							<th class="no-wrap">Approved</th>
+							<th class="no-wrap">Rejected</th>
+							<th *ngIf="isAdmin">Expert</th>
+							<th class="no-wrap">Approved</th>
+							<th class="no-wrap">Rejected</th>
+							<ng-container *ngIf="selectedOption == 'text'">
+								<th *ngIf="isAdmin">Recorder</th>
+								<th class="no-wrap">Recorded</th>
+								<th *ngIf="isAdmin">Moderator</th>
+								<th class="no-wrap">Approved</th>
+								<th class="no-wrap">Rejected</th>
+							</ng-container>
+							<ng-container *ngIf="selectedOption == 'text--'">
+								<th *ngIf="isAdmin">Reviewer</th>
+								<th class="no-wrap">Reviewed</th>
+								<th *ngIf="isAdmin">Moderator</th>
+								<th class="no-wrap">Approved</th>
+								<th class="no-wrap">Rejected</th>
+							</ng-container>
+						</tr>
+					</thead>
+					
+					<tbody>
+					<tr >
+						<ng-container *ngIf="loadingReport">
+							<td [attr.colspan]="selectedOption == 'text' ? 10 : 15" class="text-center p-2">
+								<div class="d-flex justify-content-center font-small-1">
+									<div class="spinner-border text-primary" role="status">
+										<span class="sr-only">Loading...</span>
+									</div>
+								</div>
+							</td>
+							<td *ngIf="selectedOption == 'text' && isAdmin" colspan="10" class="text-center p-2">
+								<div class="d-flex justify-content-center font-small-1">
+									<div class="spinner-border text-primary" role="status">
+										<span class="sr-only">Loading...</span>
+									</div>
+								</div>
+							</td>
+						</ng-container>
+					</tr>
+
+					<tr *ngIf="!loadingReport && batchDetailsReport.length === 0">
+						<td [attr.colspan]="selectedOption == 'text' ? 10 : 15" class="text-center p-2">
+							<div class="d-flex justify-content-center font-medium-1">
+								No data found
+							</div>
+						</td>
+						<td *ngIf="selectedOption == 'text' && isAdmin" colspan="10" class="text-center p-2">
+							<div class="d-flex justify-content-center font-medium-1">
+								No data found
+							</div>
+						</td>
+					</tr>
+
+					<tr *ngFor="let report of batchDetailsReport | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize;let reportIndex = index">
+						<td>{{ (page - 1) * pageSize + reportIndex + 1  }}</td>
+						<td>
+							<a [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">{{ report.source }}</a>
+						</td>
+						<td>{{ report.language }}</td>
+						<td>
+							<small><span>{{ report.status }}</span></small>
+						</td>
+						<td>{{ report.numberOfSentences }}</td>
+						<td *ngIf="isAdmin">{{ report.translator }}</td>
+						<td>{{ report.sentencesTranslated }}</td>
+						<td *ngIf="isAdmin">{{ report.moderator }}</td>
+						<td>{{ report.sentencesApproved }}</td>
+						<td>{{ report.sentencesRejected }}</td>
+						<td *ngIf="isAdmin">{{ report.expert }}</td>
+						<td>{{ report.sentencesExpertApproved }}</td>
+						<td>{{ report.sentencesExpertRejected }}</td>
+						<ng-container *ngIf="selectedOption == 'text'">
+							<td *ngIf="isAdmin">{{ report.recorder }}</td>
+							<td>{{ report.audiosRecorded }}</td>
+							<td *ngIf="isAdmin">{{ report.audioModerator }}</td>
+							<td>{{ report.audiosApproved }}</td>
+							<td>{{ report.audiosRejected }}</td>
+						</ng-container>
+						<td class="text-center" *ngIf="isAdmin">
+							<div class="d-flex flex-row">
+								<button type="button" class="btn btn-primary btn-sm mr-1" [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">View</button>
+								<button type="button" class="btn btn-danger btn-sm" (click)="openDeleteBatchDetailModal(report, deleteBatchDetailModal)">Delete</button>
+							</div>
+						</td>
+					</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<div class="d-flex justify-content-center mt-2" *ngIf="batchDetailsReport?.length > pageSize">
+				<ngb-pagination [collectionSize]="batchDetailsReport.length"
+								[pageSize]="pageSize"
+								[maxSize]="7"
+								[(page)]="page"  aria-label="Default pagination">
+					<ng-template ngbPaginationPrevious
+					><span [data-feather]="'chevron-left'" [size]="'18'" [class]="'font-weight-bolder'"></span>
+					</ng-template>
+					<ng-template ngbPaginationNext
+					><span [data-feather]="'chevron-right'" [size]="'18'" [class]="'font-weight-bolder'"></span
+					></ng-template>
+				</ngb-pagination>
+			</div>
+		</ng-template>
+
+    </div>
+</div>
+<ng-template #deleteBatchDetailModal>
+    <div class="modal-header">
+        <h4 class="modal-title">Delete {{ selectedBatchDetailReport.source }} - {{ selectedBatchDetailReport.language }}</h4>
+
+        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+    <div class="modal-body">
+        <p>Are you sure you want to delete this batch?</p>
+        <form [formGroup]="confirmDeleteFormGroup" (ngSubmit)="deleteBatchDetail()">
+            <div class="form-group">
+                <label for="source">To delete type: <b>{{ selectedBatchDetailReport.source }}</b></label>
+                <input type="text"
+                       class="form-control"
+                       id="source"
+                       formControlName="source"
+                       [ngClass]="{'is-invalid': ((f['source'].errors && (f['source'].dirty || f['source'].touched)) || (submitted && f['source'].value !== selectedBatchDetailReport.source) )}">
+
+                <div *ngIf="f['source'].errors && (f['source'].dirty || f['source'].touched)" class="invalid-feedback">
+                    <div *ngIf="f['source'].errors.required">Source is required</div>
+                </div>
+                <div *ngIf="submitted && f['source'].value !== selectedBatchDetailReport.source" class="invalid-feedback">
+                    Please type the source name correctly
+                </div>
+            </div>
+            <div class="">
+                <button type="submit" class="btn btn-danger pull-right" [disabled]="confirmDeleteFormGroup.invalid">Delete</button>
+            </div>
+        </form>
+    </div>
+</ng-template>

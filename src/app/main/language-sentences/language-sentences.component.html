@@ -1,0 +1,102 @@
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">All Sentences Per Language</h3>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-12 col-sm-6">
+                <form [formGroup]="languageForm">
+                    <div class="form-group">
+                        <label for="language">Select Language</label>
+                        <ng-select
+                                [items]="languages$ | async"
+                                id="language"
+                                bindLabel="name"
+                                bindValue="languageId"
+                                formControlName="language"
+                                placeholder="Select Language">
+                        </ng-select>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 col-sm-6" *ngIf="languageSentences.length > 0">
+
+                <button class="d-none d-sm-block btn btn-sm btn-success pull-right mt-2"
+                        (click)="exportToExcel()">
+                    Export as Excel
+                </button>
+                <button class="d-sm-none btn btn-sm btn-success d-block mb-2"
+                        (click)="exportToExcel()">
+                    Export as Excel
+                </button>
+                <button *ngIf="false"
+						(click)="open(downloadModal)"
+                        class="btn btn-outline-success btn-sm pull-right mr-2 mt-2">
+                    <i data-feather="box"></i>
+                    Zip Audio
+                </button>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-striped table-bordered" id="language-sentences">
+                <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Sentence</th>
+                    <th>Translation</th>
+                    <th class="no-export text-center">
+                        Audio
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <ng-container>
+                    <tr *ngFor=" let sentence of languageSentences | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index">
+                        <td>{{ (page - 1) * pageSize + i + 1}}</td>
+                        <td>{{sentence.sentenceText}}</td>
+                        <td>{{sentence.translatedText}}</td>
+                        <td class="no-export text-center">
+                            <app-audio-player *ngIf="sentence.audioUrl; else audioNotAvailable" [audioSrc]="sentence?.audioUrl"></app-audio-player>
+                            <ng-template #audioNotAvailable>
+                                N/A
+                            </ng-template>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="loadingSentences">
+                        <td colspan="4" class="text-center p-2">
+                            <div class="spinner-border text-primary font-small-1" role="status">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr *ngIf="!loadingSentences && languageSentences.length === 0">
+                        <td colspan="4" class="text-center">
+                            {{ !selectedLanguage ? 'Select a language to view sentences' : 'No sentences found for this language' }}
+                        </td>
+                    </tr>
+                </ng-container>
+                </tbody>
+            </table>
+            <div class="d-flex justify-content-center mt-2" *ngIf="languageSentences.length > pageSize">
+                <ngb-pagination [collectionSize]="languageSentences.length"
+                                [pageSize]="pageSize"
+                                [maxSize]="7"
+                                [(page)]="page"  aria-label="Default pagination">
+                    <ng-template ngbPaginationPrevious
+                    ><span [data-feather]="'chevron-left'" [size]="'18'" [class]="'font-weight-bolder'"></span>
+                    </ng-template>
+                    <ng-template ngbPaginationNext
+                    ><span [data-feather]="'chevron-right'" [size]="'18'" [class]="'font-weight-bolder'"></span
+                    ></ng-template>
+                </ngb-pagination>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ng-template #downloadModal let-modal>
+    <app-download-audio-files [modal]="modal"></app-download-audio-files>
+</ng-template>

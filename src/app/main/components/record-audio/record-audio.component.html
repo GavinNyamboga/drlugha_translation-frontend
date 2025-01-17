@@ -1,0 +1,70 @@
+<div class="d-flex flex-column align-items-center">
+    <div class="d-flex flex-row align-items-center">
+        <div class="timer me-3">
+            <div>
+                {{ elapsedTime }}
+            </div>
+        </div>
+    </div>
+    <ng-content></ng-content>
+
+    <div *ngIf="audioRecorded" class="mb-4 mt-1">
+        <audio controls>
+            <source [src]="audioUrl" type="audio/wav">
+        </audio>
+    </div>
+    <div class="audio-btns">
+        <ng-container *ngIf="!audioRecorded">
+            <div *ngIf="recordingStatus == 'stopped'"
+                 class="d-flex flex-column flex-sm-row justify-content-center align-items-center">
+                <button
+                        class="btn btn-primary"
+                        (click)="startAudioRecording()">
+                    <span [data-feather]="'mic'" class="mr-1"></span> Record
+                </button>
+                <span class="p-1 p-sm-2 text-muted">
+                    OR
+                </span>
+                <button class="btn btn-outline-primary"
+                        (click)="uploadInput.click()">
+                    <span [data-feather]="'upload'" class="mr-1"></span> Upload
+                </button>
+
+                <input #uploadInput hidden type="file" (change)="onFileSelected($event)" accept="audio/*">
+            </div>
+            <button *ngIf="recordingStatus == 'paused'"
+                    class="btn btn-info mr-2"
+                    (click)="resumeAudioRecording()">
+                <span [data-feather]="'play-circle'" class="mr-1"></span> Resume
+            </button>
+            <button *ngIf="recordingStatus == 'recording'"
+                    class="btn btn-success mr-2"
+                    (click)="pauseAudioRecording()">
+                <span [data-feather]="'pause-circle'" class="mr-1"></span> Pause
+            </button>
+            <button class="btn btn-danger"
+                    *ngIf="recordingStatus != 'stopped'"
+                    (click)="stopAudioRecording()">
+                <span [data-feather]="'stop-circle'" class="mr-1"></span> Stop
+            </button>
+        </ng-container>
+        <ng-container *ngIf="audioRecorded">
+            <button class="btn btn-light mr-2 text-danger"
+                    (click)="clearRecording()">
+                <span [data-feather]="'trash-2'" class="d-sm-none"></span>
+                <span class="d-none d-sm-block">Discard</span>
+            </button>
+            <button class="btn btn-success"
+                    style="width: 160px"
+                    [disabled]="uploadingAudio"
+                    (click)="saveAudioRecording()">
+                <ng-container *ngIf="!uploadingAudio">
+                    <span class="bi bi-check-circle me-1"></span> Save Recording
+                </ng-container>
+                <ng-container *ngIf="uploadingAudio">
+                    Uploading...
+                </ng-container>
+            </button>
+        </ng-container>
+    </div>
+</div>

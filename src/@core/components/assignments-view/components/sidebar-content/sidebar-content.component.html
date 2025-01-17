@@ -1,0 +1,21 @@
+<div class="translation-app-list">
+	<div class="app-fixed-search d-flex align-items-center" style="height: 57px">
+		<div class="d-flex align-content-center align-items-center w-100">
+			<ng-content select="[toggle-button]"></ng-content>
+			<span class="my-1 ml-1">{{ title }}</span>
+			<span *ngIf="showCount$ | async" class="text-success ml-auto font-medium-3">
+				<span  @slideInOut>{{  currentIndex$ | async }}/</span>
+				<span>{{ totalCount$ | async }}</span>
+			</span>
+		</div>
+	</div>
+
+	<div class="translations-list-wrapper" [perfectScrollbar]>
+		<div class="px-sm-0 pb-4">
+			<div class="d-flex flex-row align-items-center justify-content-center">
+				<ng-content select="[content]"></ng-content>
+			</div>
+		</div>
+	</div>
+</div>
+

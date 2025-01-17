@@ -1,0 +1,277 @@
+<h3 class="h3 mb-2" style="margin-top: -1rem">{{ batchDetailsProgressReport?.source }}</h3>
+
+<div class="row">
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="font-weight-bolder mb-1">{{ batchDetailsProgressReport?.numberOfSentences }}</h2>
+                    <p class="card-text">Total {{ isAudioType ? 'Audios' : 'Sentences' }}</p>
+                </div>
+                <div class="avatar bg-light-primary p-50 m-0">
+                    <div class="avatar-content">
+                        <i [data-feather]="'pen-tool'" class="font-medium-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="d-flex flex-column">
+                    <h2 class="font-weight-bolder mb-1">{{ language }}</h2>
+                    <p class="card-text">
+                        <span>Language</span>
+                    </p>
+                </div>
+                <div class="avatar bg-light-success p-50 m-0">
+                    <div class="avatar-content">
+                        <i [data-feather]="'folder'" class="font-medium-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-sm-6 col-12">
+        <div class="card">
+            <div class="card-header">
+                <div>
+                    <h2 class="font-weight-bolder mb-1">{{ batchDetailsStatus }}</h2>
+                    <p class="card-text">Progress</p>
+                </div>
+                <div class="avatar bg-light-info p-50 m-0">
+                    <div class="avatar-content">
+                        <i [data-feather]="'activity'" class="font-medium-5"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row match-height" *ngIf="isAdmin">
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-img-top bg-success d-flex flex-column justify-content-center align-items-center" style="height: 120px">
+                <h3 class="text-white">{{ isAudioType ? 'Transcription' : 'Translation' }}</h3>
+            </div>
+            <div class="progress-wrapper batch-details-progress">
+                <ngb-progressbar type="secondary" [value]="batchDetailsProgressReport?.translationProgress"></ngb-progressbar>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="avatar bg-light-primary">
+                        <div class="avatar-content"
+                             *ngIf="batchDetailsProgressReport?.translator; else avatarNotAvailable">
+                            {{ batchDetailsProgressReport?.translator.slice(0,1).toUpperCase()}}
+                        </div>
+                    </div>
+                    <div class="ml-1">
+                        <div class="font-small-2"><span>By</span></div>
+                        <div class="font-weight-bolder font-small-3"
+                             *ngIf="batchDetailsProgressReport?.translator; else notAssignedUser">
+                            {{ batchDetailsProgressReport?.translator }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <div class="d-flex flex-column">
+                        <span class="font-small-4">
+							{{ batchDetailsProgressReport?.sentencesTranslated }}/{{batchDetailsProgressReport?.numberOfSentences}}
+							 {{ isAudioType ? 'audios transcribed' : 'sentences translated'}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top text-center mx-0">
+                <div class="col-6 border-right py-1">
+                    <p class="card-text text-muted mb-0">Approved</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.sentencesApproved }}</h3>
+                </div>
+                <div class="col-6 py-1">
+                    <p class="card-text text-muted mb-0">Rejected</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.sentencesRejected }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-img-top bg-warning d-flex flex-column justify-content-center align-items-center" style="height: 120px">
+                <h3 class="text-white">Moderation</h3>
+            </div>
+            <div class="progress-wrapper batch-details-progress">
+                <ngb-progressbar type="secondary" [value]="batchDetailsProgressReport?.moderationProgress"></ngb-progressbar>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="avatar bg-light-primary">
+                        <div class="avatar-content"
+                             *ngIf="batchDetailsProgressReport?.moderator; else avatarNotAvailable">
+                            {{ batchDetailsProgressReport?.moderator.slice(0,1).toUpperCase()}}
+                        </div>
+                    </div>
+                    <div class="ml-1">
+                        <div class="font-small-2"><span>By</span></div>
+                        <div class="font-weight-bolder font-small-3"
+                             *ngIf="batchDetailsProgressReport?.moderator; else notAssignedUser">
+                            {{ batchDetailsProgressReport?.moderator }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <div class="d-flex flex-column">
+                        <span class="font-small-4">
+							{{ batchDetailsProgressReport?.sentencesRejected + batchDetailsProgressReport?.sentencesApproved}}/{{batchDetailsProgressReport?.numberOfSentences}}
+							{{ isAudioType ? 'audio transcription moderated' : 'sentences moderated'}}</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top text-center mx-0">
+                <div class="col-6 border-right py-1">
+                    <p class="card-text text-muted mb-0">Approved</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.sentencesApproved}}</h3>
+                </div>
+                <div class="col-6 py-1">
+                    <p class="card-text text-muted mb-0">Rejected</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.sentencesRejected }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3">
+        <div class="card">
+            <div class="card-img-top bg-info d-flex flex-column justify-content-center align-items-center" style="height: 120px">
+                <h3 class="text-white">Expert Review</h3>
+            </div>
+            <div class="progress-wrapper batch-details-progress">
+                <ngb-progressbar type="secondary" [value]="batchDetailsProgressReport?.expertReviewProgress"></ngb-progressbar>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="avatar bg-light-primary">
+                        <div class="avatar-content"
+                             *ngIf="batchDetailsProgressReport?.expert; else avatarNotAvailable">
+                            {{ batchDetailsProgressReport?.expert.slice(0,1).toUpperCase()}}
+                        </div>
+                    </div>
+                    <div class="ml-1">
+                        <div class="font-small-2"><span>By</span></div>
+                        <div class="font-weight-bolder font-small-3"
+                             *ngIf="batchDetailsProgressReport?.expert; else notAssignedUser">
+                            {{ batchDetailsProgressReport?.expert }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <div class="d-flex flex-column">
+                        <span class="font-small-4">
+							{{ batchDetailsProgressReport?.sentencesExpertApproved + batchDetailsProgressReport?.sentencesExpertRejected}}/{{batchDetailsProgressReport?.numberOfSentences}}
+							{{ isAudioType ? 'audios' : 'sentences' }} have been expertly reviewed</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top text-center mx-0">
+                <div class="col-6 border-right py-1">
+                    <p class="card-text text-muted mb-0">Approved</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.sentencesExpertApproved }}</h3>
+                </div>
+                <div class="col-6 py-1">
+                    <p class="card-text text-muted mb-0">Rejected</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.sentencesExpertRejected }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3" *ngIf="!isAudioType">
+        <div class="card">
+            <div class="card-img-top bg-primary d-flex flex-column justify-content-center align-items-center" style="height: 120px">
+                <h3 class="text-white">Audio Recording</h3>
+            </div>
+            <div class="progress-wrapper batch-details-progress">
+                <ngb-progressbar type="secondary" [value]="batchDetailsProgressReport?.audioRecordingProgress"></ngb-progressbar>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="avatar bg-light-primary">
+                        <div class="avatar-content"
+                             *ngIf="batchDetailsProgressReport?.recorder; else avatarNotAvailable">
+                            {{ batchDetailsProgressReport?.recorder.slice(0,1).toUpperCase()}}
+                        </div>
+                    </div>
+                    <div class="ml-1">
+                        <div class="font-small-2"><span>By</span></div>
+                        <div class="font-weight-bolder font-small-3"
+                             *ngIf="batchDetailsProgressReport?.recorder; else notAssignedUser">
+                            {{ batchDetailsProgressReport?.recorder }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <div class="d-flex flex-column">
+                        <span class="font-small-4">{{ batchDetailsProgressReport?.audiosRecorded }}/{{batchDetailsProgressReport?.numberOfSentences}} audios have been recorded</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top text-center mx-0">
+                <div class="col-6 border-right py-1">
+                    <p class="card-text text-muted mb-0">Approved</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.audiosApproved }}</h3>
+                </div>
+                <div class="col-6 py-1">
+                    <p class="card-text text-muted mb-0">Rejected</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.audiosRejected }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-3" *ngIf="!isAudioType">
+        <div class="card">
+            <div class="card-img-top bg-danger d-flex flex-column justify-content-center align-items-center" style="height: 120px">
+                <h3 class="text-white">Audio Review</h3>
+            </div>
+            <div class="progress-wrapper batch-details-progress">
+                <ngb-progressbar type="secondary" [value]="batchDetailsProgressReport?.audioModerationProgress"></ngb-progressbar>
+            </div>
+            <div class="card-body">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="avatar bg-light-primary">
+                        <div class="avatar-content"
+                             *ngIf="batchDetailsProgressReport?.audioModerator; else avatarNotAvailable">
+                            {{ batchDetailsProgressReport?.audioModerator.slice(0,1).toUpperCase()}}
+                        </div>
+                    </div>
+                    <div class="ml-1">
+                        <div class="font-small-2"><span>By</span></div>
+                        <div class="font-weight-bolder font-small-3"
+                             *ngIf="batchDetailsProgressReport?.audioModerator; else notAssignedUser">
+                            {{ batchDetailsProgressReport?.audioModerator }}
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-1">
+                    <div class="d-flex flex-column">
+                        <span class="font-small-4">{{ batchDetailsProgressReport?.audiosApproved + batchDetailsProgressReport?.audiosRejected}}/{{batchDetailsProgressReport?.numberOfSentences}} audios moderated</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row border-top text-center mx-0">
+                <div class="col-6 border-right py-1">
+                    <p class="card-text text-muted mb-0">Approved</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.audiosApproved }}</h3>
+                </div>
+                <div class="col-6 py-1">
+                    <p class="card-text text-muted mb-0">Rejected</p>
+                    <h3 class="font-weight-bolder mb-0">{{ batchDetailsProgressReport?.audiosRejected }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<ng-template #notAssignedUser>
+    <div class="font-weight-bolder font-small-3">Not Assigned</div>
+</ng-template>
+
+<ng-template #avatarNotAvailable>
+    <div class="avatar-content">NA</div>
+</ng-template>

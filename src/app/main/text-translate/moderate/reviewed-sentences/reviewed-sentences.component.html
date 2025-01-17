@@ -1,0 +1,44 @@
+<div class="table-responsive">
+	<table class="table table-bordered table-striped">
+		<thead>
+		<tr>
+			<th>#</th>
+			<th>
+				{{ batchType == BatchType.AUDIO ? 'Audio' : 'Sentence' }}
+			</th>
+			<th>
+				{{ batchType == BatchType.AUDIO ? 'Transcribed Text' : 'Translated Sentence' }}
+			</th>
+			<th>Language</th>
+			<th>Status</th>
+			<th *ngIf="hasRejectedSentences">Comment</th>
+		</tr>
+		</thead>
+		<tbody>
+		<tr *ngFor="let sentence of reviewedSentences; let sentenceIndex = index">
+			<td>{{ sentenceIndex + 1 }}</td>
+			<td>
+				<app-audio-player *ngIf="batchType == BatchType.AUDIO" [audioSrc]="sentence.audioLink"></app-audio-player>
+				<div *ngIf="batchType == BatchType.TEXT">
+					{{ sentence.sentenceText }}
+				</div>
+			</td>
+			<td>{{ sentence.translatedSentenceText }}</td>
+			<td>{{ language }}</td>
+			<td>
+				<small *ngIf="sentence.accepted" class="badge badge-success">
+					<span class="bi bi-check-circle me-1"></span> Approved
+				</small>
+				<small *ngIf="!sentence.accepted" class="badge badge-danger">
+					<span class="bi bi-x-circle me-1"></span> Rejected
+				</small>
+			</td>
+			<td *ngIf="hasRejectedSentences">
+				{{ sentence.comment }}
+			</td>
+		</tr>
+		</tbody>
+	</table>
+</div>
+
+
