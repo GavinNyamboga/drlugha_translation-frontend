@@ -3,20 +3,14 @@
         <ng-template matStepLabel>{{ assigneeTitle }}</ng-template>
         <form [formGroup]="translatorForm">
             <div class="mt-2">
-                <select class="form-control"
-                        id="translator"
-                        formControlName="translator"
-                        [ngClass]="{'is-invalid': translatorForm.controls['translator'].touched && translatorForm.controls['translator'].invalid}">
-                    <option disabled>Select {{ assigneeTitle }}</option>
-                    <ng-container *ngFor="let user of users">
-                        <option  [value]="user.userId">
-                            {{ user.username }}
-                        </option>
-                    </ng-container>
-                </select>
-                <div *ngIf="translatorForm.controls['translator'].touched && translatorForm.controls['translator'].invalid" class="invalid-feedback">
+                <ng-select [items]="users" bindLabel="username" bindValue="userId" formControlName="translator"
+                    placeholder="Select {{ assigneeTitle }}" [appendTo]="'body'"
+                    [ngClass]="{'is-invalid': translatorForm.controls['translator'].touched && translatorForm.controls['translator'].invalid}">
+                </ng-select>
+                <div *ngIf="translatorForm.controls['translator'].touched && translatorForm.controls['translator'].invalid"
+                    class="invalid-feedback">
                     <div *ngIf="translatorForm.controls['translator'].errors.required">
-						{{ assigneeTitle }} is required
+                        {{ assigneeTitle }} is required
                     </div>
                 </div>
             </div>
@@ -26,8 +20,7 @@
             Awaiting {{ assigneeTitle.toLowerCase() }} to mark translation as complete
         </div>
         <div class="mt-3 d-flex flex-row justify-content-end">
-            <button class="btn btn-outline-primary pull-right"
-                    matStepperNext>
+            <button class="btn btn-outline-primary pull-right" matStepperNext>
                 Next
                 <span class="bi bi-arrow-right-circle ps-1"></span>
             </button>
@@ -37,18 +30,12 @@
         <ng-template matStepLabel>Text Verifier</ng-template>
         <form [formGroup]="textVerifierForm" (ngSubmit)="assignTextVerifier()">
             <div class="mt-2">
-                <select class="form-control"
-                        id="textVerifier"
-                        formControlName="textVerifier"
-                        [ngClass]="{'is-invalid': textVerifierForm.controls['textVerifier'].touched && textVerifierForm.controls['textVerifier'].invalid}">
-                    <option disabled>Select Text Verifier</option>
-                    <ng-container *ngFor="let user of users">
-                        <option  [value]="user.userId">
-                            {{ user.username }}
-                        </option>
-                    </ng-container>
-                </select>
-                <div *ngIf="textVerifierForm.controls['textVerifier'].touched && textVerifierForm.controls['textVerifier'].invalid" class="invalid-feedback">
+                <ng-select [items]="users" bindLabel="username" bindValue="userId" formControlName="textVerifier"
+                    placeholder="Select Text Verifier" [appendTo]="'body'"
+                    [ngClass]="{'is-invalid': textVerifierForm.controls['textVerifier'].touched && textVerifierForm.controls['textVerifier'].invalid}">
+                </ng-select>
+                <div *ngIf="textVerifierForm.controls['textVerifier'].touched && textVerifierForm.controls['textVerifier'].invalid"
+                    class="invalid-feedback">
                     <div *ngIf="textVerifierForm.controls['textVerifier'].errors.required">
                         Text Verifier is required
                     </div>
@@ -63,8 +50,7 @@
             Awaiting text verifier to mark text verification as complete
         </div>
         <div class="mt-3 d-flex flex-row justify-content-end">
-            <button class="btn btn-outline-primary pull-right"
-                    matStepperNext>
+            <button class="btn btn-outline-primary pull-right" matStepperNext>
                 Next
                 <span class="bi bi-arrow-right-circle ps-1"></span>
             </button>
@@ -73,18 +59,12 @@
     <mat-step label="Second Reviewer" [completed]="progress >= 6">
         <form [formGroup]="secondReviewerForm" (ngSubmit)="assignSecondReviewer()">
             <div class="mt-2">
-                <select class="form-control"
-                        id="secondReviewer"
-                        formControlName="secondReviewer"
-                        [ngClass]="{'is-invalid': secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid}">
-                    <option value="">Select Second Reviewer</option>
-                    <ng-container *ngFor="let user of users">
-                        <option  [value]="user.userId">
-                            {{ user.username }}
-                        </option>
-                    </ng-container>
-                </select>
-                <div *ngIf="secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid" class="invalid-feedback">
+                <ng-select [items]="users" bindLabel="username" bindValue="userId" formControlName="secondReviewer"
+                    placeholder="Select Second Reviewer" [appendTo]="'body'"
+                    [ngClass]="{'is-invalid': secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid}">
+                </ng-select>
+                <div *ngIf="secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid"
+                    class="invalid-feedback">
                     <div *ngIf="secondReviewerForm.controls['secondReviewer'].errors.required">
                         Second reviewer is required
                     </div>
@@ -94,125 +74,122 @@
                 </div>
             </div>
         </form>
-        <div class="alert alert-warning mt-3 p-2" *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_EXPERT_REVIEWER">
+        <div class="alert alert-warning mt-3 p-2"
+            *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_EXPERT_REVIEWER">
             <i [data-feather]="'info'" class="me-1"></i>
             Awaiting second reviewer to mark translation as complete
         </div>
         <div class="mt-3 d-flex flex-row justify-content-end">
-            <button class="btn btn-outline-primary pull-right"
-                    matStepperNext>
+            <button class="btn btn-outline-primary pull-right" matStepperNext>
                 Next
                 <span class="bi bi-arrow-right-circle ps-1"></span>
             </button>
         </div>
     </mat-step>
     <ng-container *ngIf="batchType !== BatchType.AUDIO">
-		<mat-step label="Recorder" [completed]="progress >= 8">
-			<form [formGroup]="recorderForm" (ngSubmit)="assignRecorder()">
-				<div class="mt-2">
-					<select class="form-control"
-							id="recorder"
-							formControlName="recorder"
-							[ngClass]="{'is-invalid': recorderForm.controls['recorder'].touched && recorderForm.controls['recorder'].invalid}">
-						<option value="">Select recorder</option>
-						<ng-container *ngFor="let user of users">
-							<option  [value]="user.userId">
-								{{ user.username }}
-							</option>
-						</ng-container>
-					</select>
-					<div *ngIf="recorderForm.controls['recorder'].touched && recorderForm.controls['recorder'].invalid" class="invalid-feedback">
-						<div *ngIf="recorderForm.controls['recorder'].errors.required">
-							Recorder is required
-						</div>
-					</div>
-					<div class="mt-3">
-						<button type="submit" class="btn btn-primary">Assign Recorder</button>
-					</div>
-				</div>
-			</form>
-			<div class="alert alert-warning mt-3 p-2" *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_RECORDER">
-				<i [data-feather]="'info'" class="me-1"></i>
-				Awaiting recorder to mark translation as complete
-			</div>
-			<div class="mt-3 d-flex flex-row justify-content-end">
-				<button class="btn btn-outline-primary pull-right"
-						matStepperNext>
-					Next
-					<span class="bi bi-arrow-right-circle ps-1"></span>
-				</button>
-			</div>
-		</mat-step>
-		<mat-step label="Audio Verifier" [completed]="progress >= 10">
-			<form [formGroup]="audioVerifier" (ngSubmit)="assignAudioVerifier()">
-				<div class="mt-2">
-					<select class="form-control"
-							id="audioVerifier"
-							formControlName="audioVerifier"
-							[ngClass]="{'is-invalid': audioVerifier.controls['audioVerifier'].touched && audioVerifier.controls['audioVerifier'].invalid}">
-						<option value="">Select audio verifier</option>
-						<ng-container *ngFor="let user of users">
-							<option  [value]="user.userId">
-								{{ user.username }}
-							</option>
-						</ng-container>
-					</select>
-					<div *ngIf="audioVerifier.controls['audioVerifier'].touched && audioVerifier.controls['audioVerifier'].invalid" class="invalid-feedback">
-						<div *ngIf="audioVerifier.controls['audioVerifier'].errors.required">
-							Audio verifier is required
-						</div>
-					</div>
-					<div class="mt-3">
-						<button type="submit" class="btn btn-primary">Assign Audio Verifier</button>
-					</div>
-				</div>
-			</form>
-			<div class="alert alert-warning mt-3 p-2" *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_AUDIO_VERIFIER">
-				<i [data-feather]="'info'" class="me-1"></i>
-				Awaiting audio verifier to complete audio verification
-			</div>
-			<div class="mt-3 d-flex flex-row justify-content-end">
-				<button class="btn btn-outline-primary pull-right"
-						matStepperNext>
-					Next
-					<span class="bi bi-arrow-right-circle ps-1"></span>
-				</button>
-			</div>
-		</mat-step>
-	</ng-container>
+        <mat-step label="Audio Recorders" [completed]="progress >= 8">
+            <form [formGroup]="recorderForm" (ngSubmit)="assignRecorders()">
+                <div class="mt-2">
+                    <div class="form-group">
+                        <label for="recorders">Select Recorders</label>
+                        <ng-select [items]="users" [multiple]="true" bindLabel="username" bindValue="userId"
+                            formControlName="recorders" placeholder="Select recorders" [appendTo]="'body'"
+                            [ngClass]="{'is-invalid': recorderForm.get('recorders').touched && recorderForm.get('recorders').invalid}">
+                            <ng-template ng-option-tmp let-item="item">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span>{{ item.username }}</span>
+                                </div>
+                            </ng-template>
+                        </ng-select>
+
+                        <div *ngIf="recorderForm.get('recorders').touched && recorderForm.get('recorders').invalid"
+                            class="invalid-feedback">
+                            <div *ngIf="recorderForm.get('recorders').errors?.required">
+                                At least one recorder is required
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <button type="submit" class="btn btn-primary">Assign Recorders</button>
+                    </div>
+                </div>
+            </form>
+            <div class="alert alert-warning mt-3 p-2" *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_RECORDER">
+                <i [data-feather]="'info'" class="me-1"></i>
+                Awaiting recorder to mark translation as complete
+            </div>
+            <div class="mt-3 d-flex flex-row justify-content-end">
+                <button class="btn btn-outline-primary pull-right" matStepperNext>
+                    Next
+                    <span class="bi bi-arrow-right-circle ps-1"></span>
+                </button>
+            </div>
+        </mat-step>
+        <mat-step label="Audio Verifier" [completed]="progress >= 10">
+            <form [formGroup]="audioVerifier" (ngSubmit)="assignAudioVerifier()">
+                <div class="mt-2">
+                    <ng-select [items]="users" bindLabel="username" bindValue="userId" formControlName="audioVerifier"
+                        placeholder="Select audio verifier" [appendTo]="'body'"
+                        [ngClass]="{'is-invalid': audioVerifier.controls['audioVerifier'].touched && audioVerifier.controls['audioVerifier'].invalid}">
+                    </ng-select>
+                    <div *ngIf="audioVerifier.controls['audioVerifier'].touched && audioVerifier.controls['audioVerifier'].invalid"
+                        class="invalid-feedback">
+                        <div *ngIf="audioVerifier.controls['audioVerifier'].errors.required">
+                            Audio verifier is required
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Assign Audio Verifier</button>
+                    </div>
+                </div>
+            </form>
+            <div class="alert alert-warning mt-3 p-2"
+                *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_AUDIO_VERIFIER">
+                <i [data-feather]="'info'" class="me-1"></i>
+                Awaiting audio verifier to complete audio verification
+            </div>
+            <div class="mt-3 d-flex flex-row justify-content-end">
+                <button class="btn btn-outline-primary pull-right" matStepperNext>
+                    Next
+                    <span class="bi bi-arrow-right-circle ps-1"></span>
+                </button>
+            </div>
+        </mat-step>
+    </ng-container>
     <mat-step>
         <ng-template matStepLabel>Done</ng-template>
         <div class="alert alert-success mt-2 p-2">
             <span>
-				<span data-feather="check-circle" class="mr-1"></span>
-				All the steps required are completed
-			</span>
+                <span data-feather="check-circle" class="mr-1"></span>
+                All the steps required are completed
+            </span>
         </div>
         <div *ngIf="false">
-			<h4>Final Translation</h4>
+            <h4>Final Translation</h4>
             <div class="table-responsive">
                 <table class="table table-striped">
                     <thead>
-                    <tr>
-                        <th style="width: 3%">#</th>
-                        <th style="width: 35%">Sentence</th>
-                        <th style="width: 35%;">Translation</th>
-                        <th class="text-center">Audio</th>
-                    </tr>
+                        <tr>
+                            <th style="width: 3%">#</th>
+                            <th style="width: 35%">Sentence</th>
+                            <th style="width: 35%;">Translation</th>
+                            <th class="text-center">Audio</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let sentence of completedSentences; let i = index">
-                        <td>{{ i + 1 }}</td>
-                        <td>{{ sentence.sentenceText }}</td>
-                        <td>{{ sentence.translatedText }}</td>
-                        <td>
-                            <div class="d-flex flex-row justify-content-center">
-                                <audio controls="" >
-                                    <source [src]="sentence.audioUrl" type="audio/wav">
-                                </audio>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr *ngFor="let sentence of completedSentences; let i = index">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ sentence.sentenceText }}</td>
+                            <td>{{ sentence.translatedText }}</td>
+                            <td>
+                                <div class="d-flex flex-row justify-content-center">
+                                    <audio controls="">
+                                        <source [src]="sentence.audioUrl" type="audio/wav">
+                                    </audio>
+                                </div>
+                            </td>
+                        </tr>
                 </table>
             </div>
         </div>

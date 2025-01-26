@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import {HttpClient} from "@angular/common/http";
+import {HttpClient, HttpParams} from "@angular/common/http";
 import {BehaviorSubject, Observable} from "rxjs";
 import {Batch} from "../../models/batch/batch";
 import {environment} from "../../../environments/environment";
@@ -38,7 +38,7 @@ export class BatchService {
 	  }
 
 	  getBatchDetails(batchId: number): Observable<any> {
-		return this.httpClient.get(`${environment.apiUrl}/batch-details/${batchId}`);
+		return this.httpClient.get(`${environment.apiUrl}batch-details/${batchId}`);
 	  }
 
 	assignTranslator(batchId, translator): Observable<any> {
@@ -53,7 +53,16 @@ export class BatchService {
 		return this.httpClient.put(`${environment.apiUrl}assign/second-reviewer/${batchDetailsId}`, secondReviewer);
 	}
 
-	assignRecorder(batchDetailsId: any, recorder: { recordedById: number }): Observable<any> {
+	assignUsersToBatch(batchDetailsId: any, userIds: { userIds: number[] }, role: string): Observable<any> {
+		const params = new HttpParams().set('role', role);
+		return this.httpClient.put(
+			`${environment.apiUrl}assign/${batchDetailsId}`,
+			 userIds,
+			 {params}
+			);
+	}
+
+	assignRecorder(batchDetailsId: any, recorder: { recordedByIds: number[] }): Observable<any> {
 		return this.httpClient.put(`${environment.apiUrl}assign/recorder/${batchDetailsId}`, recorder);
 	}
 

@@ -21,14 +21,24 @@
             </p>
         </div>
     </div>
-    <div class="d-flex justify-content-center my-4">
-        <audio #audio controls="" >
-            <source [src]="currentAssignment.audioLink" type="audio/wav">
-        </audio>
-    </div>
-    <div class="d-flex justify-content-between">
-        <button (click)="rejectVoice(currentAssignment.voiceId)" class="btn btn-outline-danger ml-1 ml-md-5 mb-5">Reject</button>
-        <button (click)="approveVoice(currentAssignment.voiceId)" class="btn btn-outline-success mr-1 mr-md-5 mb-5">Verify</button>
+
+    <div class="mb-4">
+        <div *ngFor="let audio of currentAssignment.audioList" class="mb-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <!-- Audio Player -->
+                <audio #audioControl controls class="flex-grow-1">
+                    <source [src]="audio.audioLink" type="audio/wav">
+                </audio>
+                <div class="d-flex ml-3">
+                    <label>{{audio.recordedBy}}</label>
+                </div>
+    
+                <div class="d-flex ml-3">
+                    <button (click)="rejectVoice(audio.voiceId)" class="btn btn-outline-danger mx-2">Reject</button>
+                    <button (click)="approveVoice(audio.voiceId)" class="btn btn-outline-success mx-2">Verify</button>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

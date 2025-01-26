@@ -1,4 +1,4 @@
-import {Component, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from "@angular/core";
+import {Component, ElementRef, Input, OnChanges, OnInit, QueryList, SimpleChanges, ViewChild, ViewChildren} from "@angular/core";
 import {ToastrService} from "ngx-toastr";
 import {ActivatedRoute, Router} from "@angular/router";
 import {RecordedSentence} from "../../../../../@core/models/audio/recorded-sentence";
@@ -15,10 +15,14 @@ export class AudiosToModerateComponent implements OnInit, OnChanges {
 	@Input() language: string;
 	@Input() batchDetailsId: number;
 
-	@ViewChild("audio") audio: ElementRef;
+	//@ViewChild("audio") audio: ElementRef;
+	@ViewChildren("audioControl") audioElements: QueryList<ElementRef>;
+
 
 	currentAssignment: RecordedSentence;
 	currentIndex = 0;
+	selectedActions: { [voiceId: number]: boolean } = {}; 
+
 	constructor(
 		private recordingService: RecordingsService,
 		private batchService: BatchService,
@@ -40,7 +44,8 @@ export class AudiosToModerateComponent implements OnInit, OnChanges {
 	approveVoice(voiceId: number) {
 		this.recordingService.approveVoiceRecording(voiceId, true).subscribe({
 			next: () => {
-				this.nextAssignment();
+				this.selectedActions[voiceId] = true; // Mark this audio as acted upon
+        		this.checkActionsCompleted();
 			},
 			error: () => {
 				this.toastr.error("Failed to approve voice");
@@ -51,7 +56,8 @@ export class AudiosToModerateComponent implements OnInit, OnChanges {
 	rejectVoice(voiceId: number) {
 		this.recordingService.rejectVoiceRecording(voiceId, true).subscribe({
 			next: () => {
-				this.nextAssignment();
+				this.selectedActions[voiceId] = true; // Mark this audio as acted upon
+        		this.checkActionsCompleted();
 			},
 			error: () => {
 				this.toastr.error("Failed to reject voice");
@@ -59,15 +65,35 @@ export class AudiosToModerateComponent implements OnInit, OnChanges {
 		});
 	}
 
+	checkActionsCompleted() {
+		const allActionsSelected = this.currentAssignment.audioList.every(audio =>
+		  this.selectedActions[audio.voiceId]
+		);
+	
+		if (allActionsSelected) {
+		  console.log('Both actions selected for this set');
+		  this.nextAssignment();
+		} else {
+		  console.log('Waiting for actions...');
+		}
+	  }
+
 	nextAssignment() {
 		if (this.currentIndex == this.sentencesToModerate.length - 1) {
 			this.markAudioAsReviewed();
 		} else {
 			this.currentIndex++;
 			this.currentAssignment = this.sentencesToModerate[this.currentIndex];
-			this.audio.nativeElement.load();
+			this.loadAudioForCurrentAssignment();
 		}
 	}
+
+	loadAudioForCurrentAssignment(): void {
+		const audioControlElements = this.audioElements.toArray();
+		audioControlElements.forEach(audioControl => {
+		  audioControl.nativeElement.load(); // Load each audio in the list
+		});
+	  }
 
 	markAudioAsReviewed() {
 		this.batchService.markAudioAsReviewed(this.batchDetailsId).subscribe({

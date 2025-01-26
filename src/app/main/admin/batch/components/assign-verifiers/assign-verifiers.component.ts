@@ -1,12 +1,13 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from "@angular/core";
-import {UntypedFormBuilder, UntypedFormGroup, Validators} from "@angular/forms";
-import {ToastrService} from "ngx-toastr";
-import {StepperSelectionEvent} from "@angular/cdk/stepper";
-import {User} from "../../../../../../@core/models/user.model";
-import {BatchStatus} from "../../../../../../@core/enums/batch-status";
-import {BatchService} from "../../../../../../@core/services/batch/batch.service";
-import {CompletedSentence} from "../../../../../../@core/models/sentence/completed-sentence";
-import {BatchType} from "../../../../../../@core/enums/batch-type";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
+import { UntypedFormBuilder, UntypedFormGroup, Validators } from "@angular/forms";
+import { ToastrService } from "ngx-toastr";
+import { StepperSelectionEvent } from "@angular/cdk/stepper";
+import { User } from "../../../../../../@core/models/user.model";
+import { BatchStatus } from "../../../../../../@core/enums/batch-status";
+import { BatchService } from "../../../../../../@core/services/batch/batch.service";
+import { CompletedSentence } from "../../../../../../@core/models/sentence/completed-sentence";
+import { BatchType } from "../../../../../../@core/enums/batch-type";
+import { UserBatchRole } from "@core/enums/bath-assigned-user-role";
 
 @Component({
 	selector: "app-assign-verifiers",
@@ -62,7 +63,13 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 		});
 
 		this.recorderForm = this.fb.group({
-			recorder: ["", Validators.required]
+			recorders: [
+				[],
+				[
+					Validators.required,
+					Validators.minLength(1)
+				]
+			]
 		});
 
 		this.audioVerifier = this.fb.group({
@@ -84,7 +91,7 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 		});
 
 		this.recorderForm.patchValue({
-			recorder: this.batchDetail?.recordedBy?.userId
+			recorders: this.batchDetail?.recordedBy?.map((recorder: any) => recorder.userId) || []
 		});
 
 		this.audioVerifier.patchValue({
@@ -94,28 +101,28 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 
 	private get getStepProgress(): number {
 		switch (this.batchDetail?.batchStatus) {
-		case this.batchStatus.ASSIGNED_TRANSLATOR:
-			return 1;
-		case this.batchStatus.TRANSLATED:
-			return 2;
-		case this.batchStatus.ASSIGNED_TEXT_VERIFIER:
-			return 3;
-		case this.batchStatus.TRANSLATION_VERIFIED:
-			return 4;
-		case this.batchStatus.ASSIGNED_EXPERT_REVIEWER:
-			return 5;
-		case this.batchStatus.SECOND_VERIFICATION_DONE:
-			return 6;
-		case this.batchStatus.ASSIGNED_RECORDER:
-			return 7;
-		case this.batchStatus.RECORDED:
-			return 8;
-		case this.batchStatus.ASSIGNED_AUDIO_VERIFIER:
-			return 9;
-		case this.batchStatus.AUDIO_VERIFIED:
-			return 10;
-		default:
-			return 11;
+			case this.batchStatus.ASSIGNED_TRANSLATOR:
+				return 1;
+			case this.batchStatus.TRANSLATED:
+				return 2;
+			case this.batchStatus.ASSIGNED_TEXT_VERIFIER:
+				return 3;
+			case this.batchStatus.TRANSLATION_VERIFIED:
+				return 4;
+			case this.batchStatus.ASSIGNED_EXPERT_REVIEWER:
+				return 5;
+			case this.batchStatus.SECOND_VERIFICATION_DONE:
+				return 6;
+			case this.batchStatus.ASSIGNED_RECORDER:
+				return 7;
+			case this.batchStatus.RECORDED:
+				return 8;
+			case this.batchStatus.ASSIGNED_AUDIO_VERIFIER:
+				return 9;
+			case this.batchStatus.AUDIO_VERIFIED:
+				return 10;
+			default:
+				return 11;
 		}
 	}
 
@@ -125,14 +132,18 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 			return;
 		}
 
-		const  textVerifier = parseInt(this.textVerifierForm.value.textVerifier, 10);
-		this.batchService.assignTextVerifier(this.batchDetail.batchDetailsId, {translationVerifiedById: textVerifier}).subscribe(
+		const textVerifier = parseInt(this.textVerifierForm.value.textVerifier, 10);
+		const payload = {
+			userIds: [textVerifier]
+		};
+
+		this.batchService.assignUsersToBatch(this.batchDetail.batchDetailsId, payload, UserBatchRole.TEXT_VERIFIER).subscribe(
 			(res) => {
 				this.addBatchDetails.emit(res);
 				this.toastService.success("Text verifier added successfully");
 			},
 			(error) => {
-				console.log(error);
+				console.error(error);
 				this.toastService.error("Something went wrong. Please try again later");
 			}
 		);
@@ -144,8 +155,12 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 			return;
 		}
 
-		const  {secondReviewer} = this.secondReviewerForm.value;
-		this.batchService.assignSecondReviewer(this.batchDetail.batchDetailsId, {secondReviewerId: secondReviewer}).subscribe(
+		const { secondReviewer } = this.secondReviewerForm.value;
+		const payload = {
+			userIds: [secondReviewer]
+		};
+
+		this.batchService.assignUsersToBatch(this.batchDetail.batchDetailsId, payload, UserBatchRole.EXPERT_TEXT_REVIEWER).subscribe(
 			(res) => {
 				this.addBatchDetails.emit(res);
 				this.toastService.success("Second reviewer added successfully");
@@ -157,20 +172,31 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 		);
 	}
 
-	assignRecorder(): void {
+	assignRecorders(): void {
+		// Mark all form controls as touched to trigger validation
 		this.recorderForm.markAllAsTouched();
+
+		// Check if the form is valid
 		if (this.recorderForm.invalid) {
 			return;
 		}
 
-		const  {recorder} = this.recorderForm.value;
-		this.batchService.assignRecorder(this.batchDetail.batchDetailsId, {recordedById: recorder}).subscribe(
+		// Get selected recorder IDs
+		const recorderIds = this.recorderForm.value.recorders;
+
+		// Prepare the payload for multiple recorders
+		const payload = {
+			userIds: recorderIds
+		};
+
+		// Call service method to assign multiple recorders
+		this.batchService.assignUsersToBatch(this.batchDetail.batchDetailsId, payload, UserBatchRole.AUDIO_RECORDER).subscribe(
 			(res) => {
 				this.addBatchDetails.emit(res);
-				this.toastService.success("Recorder added successfully");
+				this.toastService.success("Recorders added successfully");
 			},
 			(error) => {
-				console.log(error);
+				console.error(error);
 				this.toastService.error("Something went wrong. Please try again later");
 			}
 		);
@@ -182,8 +208,12 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 			return;
 		}
 
-		const  {audioVerifier} = this.audioVerifier.value;
-		this.batchService.assignAudioVerifier(this.batchDetail.batchDetailsId, {audioVerifiedById: audioVerifier}).subscribe(
+		const { audioVerifier } = this.audioVerifier.value;
+		const payload = {
+			userIds: [audioVerifier]
+		};
+
+		this.batchService.assignUsersToBatch(this.batchDetail.batchDetailsId, payload, UserBatchRole.AUDIO_VERIFIER).subscribe(
 			(res) => {
 				this.addBatchDetails.emit(res);
 				this.toastService.success("Audio verifier added successfully");
