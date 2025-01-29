@@ -132,10 +132,10 @@
 							<th [attr.colspan]="1 + extraColSpan" class="text-center">
 								{{ (selectedOption == 'text_feedback' || selectedOption == 'text') ? 'Translation' : 'Transcription' }}
 							</th>
-							<th [attr.colspan]="3 + extraColSpan" class="text-center">{{((selectedOption == 'text_feedback' || selectedOption == 'text') ? 'Text Moderation' : 'Audio Moderation')}}</th>
-							<th [attr.colspan]="6 + extraColSpan" class="text-center">Expert Review (10%)</th>
-							<!-- <th *ngIf="selectedOption == 'audio'" [attr.colspan]="3 + extraColSpan" class="text-center">Audio Recording</th>
-							<th *ngIf="selectedOption == 'audio'" [attr.colspan]="3 + extraColSpan" class="text-center">Audio Moderation</th> -->
+							<th [attr.colspan]="2 + extraColSpan" class="text-center">{{((selectedOption == 'text_feedback' || selectedOption == 'text') ? 'Text Moderation' : 'Audio Moderation')}}</th>
+							<th [attr.colspan]="2 + extraColSpan" class="text-ce	nter">Expert Text Review (10%)</th>
+							 <th [attr.colspan]="4 + extraColSpan" class="text-center">Audio Recording</th>
+							<!--<th *ngIf="selectedOption == 'audio'" [attr.colspan]="3 + extraColSpan" class="text-center">Audio Moderation</th> -->
 							<th *ngIf="isAdmin" rowspan="2" style="width: 100px;" class="text-center">Action</th>
 						</tr>
 						<tr>
@@ -197,38 +197,59 @@
 						</td>
 					</tr>
 
-					<tr *ngFor="let report of batchDetailsReport | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize;let reportIndex = index">
-						<td>{{ (page - 1) * pageSize + reportIndex + 1  }}</td>
-						<td>
-							<a [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">{{ report.source }}</a>
-						</td>
-						<td>{{ report.language }}</td>
-						<td>
-							<small><span>{{ report.status }}</span></small>
-						</td>
-						<td>{{ report.numberOfSentences }}</td>
-						<td *ngIf="isAdmin">{{ report.translator }}</td>
-						<td>{{ report.sentencesTranslated }}</td>
-						<td *ngIf="isAdmin">{{ report.moderator }}</td>
-						<td>{{ report.sentencesApproved }}</td>
-						<td>{{ report.sentencesRejected }}</td>
-						<td *ngIf="isAdmin">{{ report.expert }}</td>
-						<td>{{ report.sentencesExpertApproved }}</td>
-						<td>{{ report.sentencesExpertRejected }}</td>
-						<ng-container *ngIf="selectedOption == 'text'">
-							<td *ngIf="isAdmin">{{ report.recorder }}</td>
-							<td>{{ report.audiosRecorded }}</td>
-							<td *ngIf="isAdmin">{{ report.audioModerator }}</td>
-							<td>{{ report.audiosApproved }}</td>
-							<td>{{ report.audiosRejected }}</td>
+					<ng-container *ngFor="let report of batchDetailsReport | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let reportIndex = index">
+						<tr>
+							<td>{{ (page - 1) * pageSize + reportIndex + 1 }}</td>
+							<td>
+								<a [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">{{ report.source }}</a>
+							</td>
+							<td>{{ report.language }}</td>
+							<td>
+								<small><span>{{ report.status }}</span></small>
+							</td>
+							<td>{{ report.numberOfSentences }}</td>
+							<td *ngIf="isAdmin">{{ report.translator }}</td>
+							<td>{{ report.sentencesTranslated }}</td>
+							<td *ngIf="isAdmin">{{ report.moderator }}</td>
+							<td>{{ report.sentencesApproved }}</td>
+							<td>{{ report.sentencesRejected }}</td>
+							<td *ngIf="isAdmin">{{ report.expert }}</td>
+							<td>{{ report.sentencesExpertApproved }}</td>
+							<td>{{ report.sentencesExpertRejected }}</td>
+							
+							<ng-container *ngIf="selectedOption == 'text'">
+								<ng-container *ngIf="report.audioStats?.length > 0; else noAudioStats">
+									<td *ngIf="isAdmin">{{ report.audioStats[0].recorder }}</td>
+									<td>{{ report.audioStats[0].audiosRecorded }}</td>
+									<td *ngIf="isAdmin">{{ report.audioModerator }}</td>
+									<td>{{ report.audioStats[0].audiosApproved }}</td>
+									<td>{{ report.audioStats[0].audiosRejected }}</td>
+								</ng-container>
+							</ng-container>
+							
+							<td class="text-center" *ngIf="isAdmin">
+								<div class="d-flex flex-row">
+									<button type="button" class="btn btn-primary btn-sm mr-1" 
+											[routerLink]="['/main/reports/batch-details', report.batchDetailsId]">View</button>
+									<button type="button" class="btn btn-danger btn-sm" 
+											(click)="openDeleteBatchDetailModal(report, deleteBatchDetailModal)">Delete</button>
+								</div>
+							</td>
+						</tr>
+		
+						<ng-container *ngIf="selectedOption == 'text' && report.audioStats?.length > 1">
+							<tr *ngFor="let audio of report.audioStats.slice(1); let audioIndex = index" 
+								class="audio-stats-row">
+								<td colspan="13"></td> 
+								<td *ngIf="isAdmin">{{ audio.recorder }}</td>
+								<td>{{ audio.audiosRecorded }}</td>
+								<td *ngIf="isAdmin">{{ report.audioModerator }}</td>
+								<td>{{ audio.audiosApproved }}</td>
+								<td>{{ audio.audiosRejected }}</td>
+								<td *ngIf="isAdmin"></td> 
+							</tr>
 						</ng-container>
-						<td class="text-center" *ngIf="isAdmin">
-							<div class="d-flex flex-row">
-								<button type="button" class="btn btn-primary btn-sm mr-1" [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">View</button>
-								<button type="button" class="btn btn-danger btn-sm" (click)="openDeleteBatchDetailModal(report, deleteBatchDetailModal)">Delete</button>
-							</div>
-						</td>
-					</tr>
+					</ng-container>
 					</tbody>
 				</table>
 			</div>
@@ -282,3 +303,13 @@
         </form>
     </div>
 </ng-template>
+
+<!-- <ng-template #additionalAudioRow>
+    <tr>
+        <td *ngIf="isAdmin">{{ audio.recorder }}</td>
+        <td>{{ audio.audiosRecorded }}</td>
+        <td *ngIf="isAdmin">{{ report.audioModerator }}</td>
+        <td>{{ audio.audiosApproved }}</td>
+        <td>{{ audio.audiosRejected }}</td>
+    </tr>
+</ng-template> -->
