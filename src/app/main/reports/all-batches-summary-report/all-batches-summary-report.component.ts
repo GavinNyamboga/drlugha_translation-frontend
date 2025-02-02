@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, TemplateRef } from "@angular/core";
+import { Component, ContentChild, OnDestroy, OnInit, TemplateRef } from "@angular/core";
 import { ToastrService } from "ngx-toastr";
 import { Router } from "@angular/router";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
@@ -11,13 +11,17 @@ import { AuthenticationService } from "../../../auth/service";
 import { Subject } from "rxjs";
 import { takeUntil } from "rxjs/operators";
 import { BatchType } from "../../../../@core/enums/batch-type";
+import { DownloadHelperService } from "@core/services/download-helper/download-helper.service";
+import { HttpEvent, HttpEventType } from "@angular/common/http";
+import { DownloadAudioFilesComponent } from "@core/components/download-audio-helper/components/download-audio-files/download-audio-files.component";
 
 @Component({
   selector: "app-all-batches-summary-report",
   templateUrl: "./all-batches-summary-report.component.html",
   styleUrls: ["./all-batches-summary-report.component.scss"]
 })
-export class AllBatchesSummaryReportComponent implements OnInit, OnDestroy {
+export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponent implements OnInit, OnDestroy {
+  @ContentChild("progressChart", { static: false }) progressChart;
   batchDetailsReportOriginal: BatchDetailsSummaryReport[] = [];
   batchDetailsReport: BatchDetailsSummaryReport[] = [];
   selectedBatchDetailReport: BatchDetailsSummaryReport;
@@ -29,16 +33,23 @@ export class AllBatchesSummaryReportComponent implements OnInit, OnDestroy {
   loadingReport = true;
   selectedOption: BatchType = BatchType.TEXT;
   unsubscribe$ = new Subject<void>();
+  selectedBatches: Set<number> = new Set();
+  allSelected: boolean = false;
+  downloadInProgress = false;
 
   constructor(
     private router: Router,
     private sentenceservice: SentenceService,
     private batchService: BatchService,
-    private modalService: NgbModal,
+    protected modalService: NgbModal,
     private formBuilder: FormBuilder,
-    private toastr: ToastrService,
-    private authenticationService: AuthenticationService
-  ) { }
+    protected toastr: ToastrService,
+    private authenticationService: AuthenticationService,
+    protected downloadHelper: DownloadHelperService,
+
+  ) {
+    super(downloadHelper, modalService, toastr);
+  }
 
   ngOnInit(): void {
     this.getUploadedAndTranslatedSentences();
@@ -80,6 +91,116 @@ export class AllBatchesSummaryReportComponent implements OnInit, OnDestroy {
           this.toastr.error("Error getting batch details report");
         }
       });
+  }
+
+  toggleSelectAll() {
+    const startIndex = (this.page - 1) * this.pageSize;
+    const endIndex = Math.min(this.page * this.pageSize, this.batchDetailsReport.length);
+
+    if (this.allSelected) {
+      // Deselect batches for the current page
+      for (let i = startIndex; i < endIndex; i++) {
+        this.selectedBatches.delete(this.batchDetailsReport[i].batchDetailsId);
+      }
+    } else {
+      // Select batches for the current page
+      for (let i = startIndex; i < endIndex; i++) {
+        this.selectedBatches.add(this.batchDetailsReport[i].batchDetailsId);
+      }
+    }
+    this.allSelected = !this.allSelected;
+  }
+
+  toggleBatchSelection(batchId: number) {
+    if (this.selectedBatches.has(batchId)) {
+      this.selectedBatches.delete(batchId);
+      this.allSelected = false;
+    } else {
+      this.selectedBatches.add(batchId);
+      if (this.selectedBatches.size === this.batchDetailsReport.length) {
+        this.allSelected = true;
+      }
+    }
+  }
+
+
+  open(downloadModal) {
+    this.openDownloadModal(downloadModal, this.selectedBatches);
+  }
+
+  protected openDownloadModal(downloadModal, batchDetailIds: Set<number>) {
+    this.modalService.open(downloadModal, {
+      size: "sm",
+      centered: true,
+      backdrop: "static",
+      beforeDismiss: async () => {
+        return await this.confirmCancel();
+      }
+    });
+
+    this.downloadInProgress = true;
+    this.downloadHelper.downloadMultipleFilesAsZip(batchDetailIds, false)
+      .subscribe(
+        (event: HttpEvent<Blob>) => {
+          if (event.type === HttpEventType.DownloadProgress) {
+            const progress = Math.round((100 * event.loaded) / event.total);
+            this.downloadHelper.totalProgress = progress;
+          } else if (event.type === HttpEventType.Response) {
+            const blob = new Blob([event.body], { type: 'application/zip' });
+            //console.log(event.headers.keys()); // List all available headers
+            // Get filename from Content-Disposition header
+            // const contentDisposition = event.headers.get('Content-Disposition');
+            // console.log('Content-Disposition:', contentDisposition);
+
+            let fileName = 'batch.zip'; // default filename
+
+            // if (contentDisposition) {
+            //   // Simpler regex that looks for filename=something
+            //   const matches = /filename=([^;]+)/.exec(contentDisposition);
+
+            //   if (matches && matches[1]) {
+            //     fileName = matches[1].trim();
+            //   }
+
+            //    // Debug log
+            //   console.log('Matches:', matches); // Debug log
+            // }
+
+
+            this.downloadFile(blob, fileName);
+            this.downloadInProgress = false;
+            this.startAutoClose();
+          }
+        },
+        (error) => {
+          this.toastr.error("Error downloading audio files");
+          this.downloadInProgress = false;
+        }
+      );
+  }
+
+  protected downloadFile(blob: Blob, fileName: string) {
+    const url = window.URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.download = fileName;
+    anchor.href = url;
+    anchor.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  protected startAutoClose() {
+    this.downloadHelper.autoCloseProgress = 100;
+    const interval = setInterval(() => {
+      if (this.downloadHelper.autoCloseProgress > 0) {
+        this.downloadHelper.autoCloseProgress--;
+      } else {
+        setTimeout(() => {
+          this.modalService.dismissAll();
+          this.downloadHelper.autoCloseProgress = null;
+          clearInterval(interval);
+        }, 500);
+      }
+    }, 50);
   }
 
   private initializeConfirmDeleteFormGroup() {
@@ -151,14 +272,14 @@ export class AllBatchesSummaryReportComponent implements OnInit, OnDestroy {
 
   getUniqueSentencesApprovedByExpert(report: BatchDetailsSummaryReport, expert: string): number {
     const uniqueSentences = new Set<string>();
-  
+
     // Check if the expert's name matches the specified one
     if (report.expert === expert) {
       // Assuming sentencesExpertApproved represents the number of sentences approved by the expert
       // Adjust this based on your actual property name
       uniqueSentences.add(report.sentencesExpertApproved.toString()); // Convert to string to ensure uniqueness
     }
-  
+
     return uniqueSentences.size;
   }
 

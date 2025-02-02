@@ -42,7 +42,7 @@ export class BatchDetailsReportComponent
     this.getBatchDetailsReport();
   }
 
-  ngOnDestroy() {}
+  ngOnDestroy() { }
 
   private getBatchDetailsReport() {
     this.batchService
@@ -57,8 +57,8 @@ export class BatchDetailsReportComponent
           }
 
           // Check for duplicates based on audio URL
-          const uniqueSentences = this.removeDuplicateAudioURLs(response.completedSentences);
-          this.batchDetailsReport = { ...response, completedSentences: uniqueSentences };
+          //const uniqueSentences = this.removeDuplicateAudioURLs(response.completedSentences);
+          this.batchDetailsReport = { ...response, completedSentences: response.completedSentences };
         },
         error: (error) => {
           this.toastr.error("Error getting batch details report");
@@ -78,28 +78,32 @@ export class BatchDetailsReportComponent
     return uniqueSentences;
   }
 
-  exportToExcel() {
-    const dataToExport = this.batchDetailsReport.completedSentences
-      // Filter out sentences with "NA" values
-      .filter(sentence => sentence.sentenceText !== 'NA' && sentence.translatedText !== 'NA')
-      .map((sentence, index) => {
-        console.log('Sentence being exported:', sentence); // Add this line to debug
-        return {
-          "#": index + 1,
-          "Sentence": sentence.sentenceText,
-          "Translated Sentence": sentence.translatedText,
-          "Audio File Name": sentence.audioUrl,
-          "Recorded By (Speaker ID)": sentence.recordedBy ? sentence.recordedBy.voiceId : 'Unknown',
-        };
-      });
-
-    const fileName = `Batch-${this.batchDetailsReport.batchDetailsId}.xlsx`;
-
-    this.downloadExcelService.downloadExcelFileFromJson(dataToExport, fileName);
+  exportToExcel(downloadModal) {
+    this.open(downloadModal, true);
   }
 
-  open(downloadModal) {
-    this.openModal(downloadModal, this.batchDetailsReport);
+  // exportToExcel() {
+  //   const dataToExport = this.batchDetailsReport.completedSentences
+  //     // Filter out sentences with "NA" values
+  //     .filter(sentence => sentence.sentenceText !== 'NA' && sentence.translatedText !== 'NA')
+  //     .map((sentence, index) => {
+  //       console.log('Sentence being exported:', sentence); // Add this line to debug
+  //       return {
+  //         "#": index + 1,
+  //         "Sentence": sentence.sentenceText,
+  //         "Translated Sentence": sentence.translatedText,
+  //         "Audio File Name": sentence.audioUrl,
+  //         "Recorded By (Speaker ID)": sentence.recordedBy ? sentence.recordedBy.voiceId : 'Unknown',
+  //       };
+  //     });
+
+  //   const fileName = `Batch-${this.batchDetailsReport.batchDetailsId}.xlsx`;
+
+  //   this.downloadExcelService.downloadExcelFileFromJson(dataToExport, fileName);
+  // }
+
+  open(downloadModal, excelOnly) {
+    this.openModal(downloadModal, this.batchDetailsReport, excelOnly);
   }
 
   get totalAudioFiles() {
@@ -114,26 +118,30 @@ export class BatchDetailsReportComponent
 
   protected readonly BatchType = BatchType;
 
-  protected openModal(downloadModal, batchDetailReport: BatchDetailReport) {
-    this.modalService.open(downloadModal, {
-      size: "sm",
-      centered: true,
-      backdrop: "static",
-      beforeDismiss: async () => {
-        return await this.confirmCancel();
-      }
-    });
+  protected openModal(downloadModal, batchDetailReport: BatchDetailReport, excelOnly: boolean) {
+    if (!excelOnly) {
+      this.modalService.open(downloadModal, {
+        size: "sm",
+        centered: true,
+        backdrop: "static",
+        beforeDismiss: async () => {
+          return await this.confirmCancel();
+        }
+      });
+    }
 
     this.downloadInProgress = true;
-    this.downloadHelper.downloadAudioFilesAsZip(batchDetailReport.batchDetailsId)
+
+    this.downloadHelper.downloadMultipleFilesAsZip(new Set([batchDetailReport.batchDetailsId]), excelOnly)
       .subscribe(
         (event: HttpEvent<Blob>) => {
           if (event.type === HttpEventType.DownloadProgress) {
             const progress = Math.round((100 * event.loaded) / event.total);
             this.downloadHelper.totalProgress = progress;
           } else if (event.type === HttpEventType.Response) {
-            const blob = new Blob([event.body], { type: 'application/zip' });
-            const fileName = `batch_${batchDetailReport.batchDetailsId}_audio.zip`;
+            const blob = new Blob([event.body], { type: excelOnly ? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' : 'application/zip' });
+
+            const fileName = `batch_${batchDetailReport.batchDetailsId}_${batchDetailReport.language}` + (excelOnly ? `.xlsx` : `.zip`);
             this.downloadFile(blob, fileName);
             this.downloadInProgress = false;
             this.startAutoClose();

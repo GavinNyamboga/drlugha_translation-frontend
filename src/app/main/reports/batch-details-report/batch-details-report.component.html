@@ -15,10 +15,10 @@
         </h4>
         <div>
             <button *ngIf="batchDetailsReport && batchDetailsReport?.batchType == BatchType.TEXT"
-                    (click)="open(downloadModal)"
+                    (click)="open(downloadModal, false)"
                     class="btn btn-outline-success btn-sm mr-2">
                 <i data-feather="box"></i>
-                Zip Audio
+                Zip Audio And Sentences
             </button>
 
             <button *ngIf="batchDetailsReport"
@@ -52,7 +52,7 @@
                 <tbody>
                 <ng-container *ngIf="batchDetailsReport?.completedSentences?.length > 0; else showMessage">
                     <tr *ngFor="let sentence of batchDetailsReport?.completedSentences | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index">
-                        <ng-container *ngIf="sentence.audioUrl">
+                        <ng-container *ngIf="sentence.audioDetails?.length>0">
                             <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                             <td>
                                 <span *ngIf="batchDetailsReport?.batchType == BatchType.AUDIO">
@@ -65,7 +65,9 @@
                             </td>
                             <td>{{ sentence?.translatedText }}</td>
                             <td class="no-export text-center" *ngIf="batchDetailsReport?.batchType == BatchType.TEXT">
-                                <app-audio-player [audioSrc]="sentence?.audioUrl"></app-audio-player>
+                                <ng-container *ngFor="let audio of sentence?.audioDetails">
+                                    <app-audio-player [audioSrc]="audio.fileUrl"></app-audio-player>
+                                </ng-container>
                             </td>
                         </ng-container>
                     </tr>

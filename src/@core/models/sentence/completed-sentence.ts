@@ -1,3 +1,5 @@
+import { AudioDetails } from "../audio/audio-details";
+
 export interface CompletedSentence {
 	sentenceId: number;
 	sentenceText: string;
@@ -8,5 +10,6 @@ export interface CompletedSentence {
 	recordedBy?: {
 	  voiceId: number;
 	};
+	audioDetails: AudioDetails[]
   }
   

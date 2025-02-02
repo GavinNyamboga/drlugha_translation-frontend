@@ -13,6 +13,17 @@ export class DownloadHelperService {
 
   constructor(private httpClient: HttpClient) {}
 
+  downloadMultipleFilesAsZip(batchDetailsIds:  Set<number>, excelOnly: boolean) {
+    this.totalProgress = 0;
+
+    const batchDetailsIdsString = Array.from(batchDetailsIds).join(',');
+    return this.httpClient.get(`${environment.apiUrl}batch-details/download?batchDetailsIds=${batchDetailsIdsString}&excelOnly=${excelOnly}`, {
+      responseType: "blob",
+      reportProgress: true,
+      observe: "events"
+    });
+  }
+
   downloadAudioFilesAsZip(batchDetailsId: number) {
     this.totalProgress = 0;
     return this.httpClient.get(`${environment.apiUrl}voice/download?batchDetailsId=${batchDetailsId}`, {
