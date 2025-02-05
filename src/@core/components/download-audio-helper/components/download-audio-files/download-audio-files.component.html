@@ -1,12 +1,12 @@
 <div class="modal-header">
-    <h4 class="modal-title" id="modal-basic-title">Downloading Audio</h4>
+    <h4 class="modal-title" id="modal-basic-title">Downloading Audio And Sentences</h4>
     <button type="button" class="close" (click)="modal.dismiss('Cross click')" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>
 </div>
 <div class="modal-body p-0">
     <div class="text-muted font-small-2 text-center pt-1">
-        <p class="mb-0">Downloading {{ totalFiles }} audio files</p>
+        <p class="mb-0">Downloading {{ totalFiles }} files</p>
     </div>
 	<div [hidden]="totalDownloadProgress == 0" id="goalChartoptions" class="mb-1 pt-1" #goalChartRef>
 		<app-download-progress-chart
@@ -17,7 +17,7 @@
 		<img src="assets/svg/bars.svg" width="50">
 		<p class="pt-3">
 			Kick back and relax while we <br/>
-			download your audio files.
+			download your files.
 		</p>
 	</div>
 	<div class="progress-wrapper" *ngIf="(autoCloseProgress$ | async)  != null">
