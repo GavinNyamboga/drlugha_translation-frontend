@@ -48,7 +48,8 @@ const routes: Routes = [
         canActivate: [ReportsGuard]
       },
       {
-        path: 'reports/rereview', // Add this route to match the menu URL
+        path: 'rereview', // Add this route to match the menu URL
+        data: { roles: [Role.Admin] },
         component: ReReviewBatchesComponent,
         // canActivate: [ReportsGuard] // Add any guards if needed
       },

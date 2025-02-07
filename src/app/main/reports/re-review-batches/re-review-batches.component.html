@@ -1,45 +1,66 @@
-<div class="container">
-  <div class="row">
-    <div class="col-12">
-      <h2>Re-Review Batches</h2>
-      <div class="form-group">
-        <label for="fileInput">Upload Excel File</label>
-        <input id="file"
-        class="form-control"
-        type="file"
-        (change)="onFileChange($event)"
-        [ngClass]="{'is-invalid': f['sentences'].invalid && f['sentences'].touched}"
-        accept=".xlsx, .xls, .csv" />
-      </div>
-      <div>
-        <button id="submit" class="btn btn-primary mt-2 float-end">Submit</button>
-      </div>
-      <div class="height-constraint mt-2" *ngIf="this.uploadedSentencesFromExcel.length > 0">
-        <div class="table-responsive">
-          <table class="table table-striped table-hover">
-            <thead class="thead-dark">
-              <tr>
-                <th scope="col">No.</th>
-                <th scope="col">Batch</th>
-                <th scope="col">Translated By User</th>
-                <th scope="col">English Sentence</th>
-                <th scope="col">Dataset Sentence</th>
-                <th scope="col">Model Sentences</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let sentence of uploadedSentencesFromExcel.slice(0, 50); let i=index;">
-                 <td>{{ i + 1 }}</td>
-                 <td>{{ sentence.batch}}</td>
-                 <td>{{ sentence.translatedBy}}</td>
-                 <td>{{ sentence.englishSentence}}</td>
-                 <td>{{ sentence.datasetSentence}}</td>
-                 <td>{{ sentence.modelSentence}}</td>
-             </tr>
-             </tbody>
-          </table>
+<form [formGroup]="createReReviewBatchForm" (ngSubmit)="createReReviewBatch()">
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <h2>Re-Review Batches</h2>
+
+        <!-- Language Selection Dropdown -->
+        <div class="form-group">
+          <label for="languageSelect">Select Language</label>
+          <ng-select id="languageSelect" [items]="languages" bindLabel="name" bindValue="languageId"
+            formControlName="selectedLanguage" placeholder="Choose a language" required>
+          </ng-select>
         </div>
+
+        <!-- File Upload (Disabled until language is selected) -->
+        <div class="form-group mt-3">
+          <label for="fileInput">Upload Excel File</label>
+          <input id="file" class="form-control" type="file" (change)="onFileChange($event)" accept=".xlsx, .xls, .csv"
+            [disabled]="!createReReviewBatchForm.get('selectedLanguage')?.value" />
+        </div>
+
+        <!-- Submit Button -->
+        <div>
+          <button id="submit" class="btn btn-primary mt-2 float-end"
+            [disabled]="uploadedSentencesFromExcel.length === 0 || loading">
+            <span *ngIf="loading">
+              <i class="fa fa-spinner fa-spin"></i> Submitting...
+            </span>
+            <span *ngIf="!loading">
+              Submit
+            </span>
+          </button>
+        </div>
+
+        <!-- Display Uploaded Sentences -->
+        <div class="height-constraint mt-2" *ngIf="uploadedSentencesFromExcel.length > 0">
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="thead-dark">
+                <tr>
+                  <th scope="col">No.</th>
+                  <th scope="col">Batch</th>
+                  <th scope="col">Translated By User</th>
+                  <th scope="col">English Sentence</th>
+                  <th scope="col">Dataset Sentence</th>
+                  <th scope="col">Model Sentences</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let sentence of uploadedSentencesFromExcel.slice(0, 50); let i=index;">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ sentence.batch }}</td>
+                  <td>{{ sentence.translatedBy }}</td>
+                  <td>{{ sentence.englishSentence }}</td>
+                  <td>{{ sentence.datasetSentence }}</td>
+                  <td>{{ sentence.modelSentence }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
-</div>
+</form>

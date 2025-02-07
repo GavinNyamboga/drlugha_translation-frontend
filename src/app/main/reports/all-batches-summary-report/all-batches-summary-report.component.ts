@@ -14,6 +14,9 @@ import { BatchType } from "../../../../@core/enums/batch-type";
 import { DownloadHelperService } from "@core/services/download-helper/download-helper.service";
 import { HttpEvent, HttpEventType } from "@angular/common/http";
 import { DownloadAudioFilesComponent } from "@core/components/download-audio-helper/components/download-audio-files/download-audio-files.component";
+import { LanguageService } from "@core/services/language/language.service";
+import { Language } from "@core/models/language/language";
+import { BatchStatus } from "@core/enums/batch-status";
 
 @Component({
   selector: "app-all-batches-summary-report",
@@ -36,6 +39,10 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
   selectedBatches: Set<number> = new Set();
   allSelected: boolean = false;
   downloadInProgress = false;
+  languages: Language[] = [];
+  selectedStatus: string | null = null;
+  selectedLanguage: string | null = null;
+  batchStatuses: { value: BatchStatus; label: string }[] = [];
 
   constructor(
     private router: Router,
@@ -46,6 +53,7 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
     protected toastr: ToastrService,
     private authenticationService: AuthenticationService,
     protected downloadHelper: DownloadHelperService,
+    private languageService: LanguageService,
 
   ) {
     super(downloadHelper, modalService, toastr);
@@ -55,6 +63,8 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
     this.getUploadedAndTranslatedSentences();
     this.getBatchDetailsReport();
     this.initializeConfirmDeleteFormGroup();
+    this.getLanguages();
+    this.loadStatuses();
   }
 
   ngOnDestroy(): void {
@@ -147,25 +157,8 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
             this.downloadHelper.totalProgress = progress;
           } else if (event.type === HttpEventType.Response) {
             const blob = new Blob([event.body], { type: 'application/zip' });
-            //console.log(event.headers.keys()); // List all available headers
-            // Get filename from Content-Disposition header
-            // const contentDisposition = event.headers.get('Content-Disposition');
-            // console.log('Content-Disposition:', contentDisposition);
 
-            let fileName = 'batch.zip'; // default filename
-
-            // if (contentDisposition) {
-            //   // Simpler regex that looks for filename=something
-            //   const matches = /filename=([^;]+)/.exec(contentDisposition);
-
-            //   if (matches && matches[1]) {
-            //     fileName = matches[1].trim();
-            //   }
-
-            //    // Debug log
-            //   console.log('Matches:', matches); // Debug log
-            // }
-
+            let fileName = 'audio_and_sentences_group_batch.zip'; // default filename
 
             this.downloadFile(blob, fileName);
             this.downloadInProgress = false;
@@ -258,7 +251,12 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
     this.selectedOption = this.mapStringToBatchType($event.nextId);
     this.unsubscribe$.next();
     this.page = 1;
+
+    this.selectedStatus = null;
+    this.selectedLanguage = null;
+
     this.getBatchDetailsReport();
+    this.loadStatuses();
   }
 
   filterUpdate($event: KeyboardEvent) {
@@ -295,4 +293,43 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
         return BatchType.TEXT;
     }
   }
+
+  applyFilters() {
+    this.batchDetailsReport = this.batchDetailsReportOriginal.filter(report => {
+      const matchesLanguage = !this.selectedLanguage || report.language.trim().toLowerCase() === this.selectedLanguage.trim().toLowerCase();
+      const matchesStatus = !this.selectedStatus || report.status.trim().toLowerCase() === this.selectedStatus.trim().toLowerCase();
+
+      return matchesLanguage && matchesStatus;
+    });
+  }
+
+  private getLanguages(): void {
+    this.languageService.getLanguages().subscribe(
+      (languages) => {
+        this.languages = languages;
+      }
+    );
+  }
+
+  private loadStatuses(): void {
+    // Clear the previous statuses to avoid duplicates
+    this.batchStatuses = [];
+
+    if (this.selectedOption === BatchType.AUDIO) {
+      this.batchStatuses = [
+        { value: BatchStatus.ASSIGNED_RECORDER, label: "Assigned Transcriber" },
+        { value: BatchStatus.RECORDED, label: "Transcribed" },
+        { value: BatchStatus.ASSIGNED_AUDIO_VERIFIER, label: "Audio Recorded" },
+        { value: BatchStatus.AUDIO_VERIFIED, label: "Audio Reviewed" }
+      ];
+    } else if (this.selectedOption === BatchType.TEXT) {
+      this.batchStatuses = [
+        { value: BatchStatus.ASSIGNED_TRANSLATOR, label: "Assigned Translator" },
+        { value: BatchStatus.TRANSLATED, label: "Translated" },
+        { value: BatchStatus.TRANSLATION_VERIFIED, label: "Moderator Reviewed" },
+        { value: BatchStatus.SECOND_VERIFICATION_DONE, label: "Expert Reviewed" }
+      ];
+    }
+  }
+
 }

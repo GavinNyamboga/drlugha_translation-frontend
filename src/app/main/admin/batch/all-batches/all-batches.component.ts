@@ -1,12 +1,13 @@
-import {Component, OnDestroy, OnInit} from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import Swal from "sweetalert2";
-import {FormArray, FormBuilder, FormGroup} from "@angular/forms";
-import {ToastrService} from "ngx-toastr";
-import {Batch} from "../../../../../@core/models/batch/batch";
-import {BatchService} from "../../../../../@core/services/batch/batch.service";
-import {BatchType} from "../../../../../@core/enums/batch-type";
-import {Subject} from "rxjs";
-import {takeUntil} from "rxjs/operators";
+import { FormArray, FormBuilder, FormGroup } from "@angular/forms";
+import { ToastrService } from "ngx-toastr";
+import { Batch } from "../../../../../@core/models/batch/batch";
+import { BatchService } from "../../../../../@core/services/batch/batch.service";
+import { BatchType } from "../../../../../@core/enums/batch-type";
+import { Subject } from "rxjs";
+import { takeUntil } from "rxjs/operators";
+import { BatchOrigin } from "@core/enums/batch-origin";
 
 @Component({
 	selector: "app-all-batches",
@@ -24,6 +25,9 @@ export class AllBatchesComponent implements OnInit, OnDestroy {
 	loadingBatches = true;
 	selectedOption: BatchType = BatchType.TEXT;
 	unsubscribe$ = new Subject<void>();
+	selectedBatchOrigin: string | null = null;
+	batchOrigins: { value: string; label: string }[] = [];
+
 
 	constructor(
 		private batchService: BatchService,
@@ -32,6 +36,7 @@ export class AllBatchesComponent implements OnInit, OnDestroy {
 
 	ngOnInit(): void {
 		this.getBatches();
+		this.loadBatchOrigins();
 	}
 
 	ngOnDestroy(): void {
@@ -142,6 +147,7 @@ export class AllBatchesComponent implements OnInit, OnDestroy {
 		this.unsubscribe$.next();
 		this.page = 1;
 		this.getBatches();
+		this.selectedBatchOrigin = null;
 	}
 
 	filterUpdate($event: KeyboardEvent) {
@@ -154,6 +160,22 @@ export class AllBatchesComponent implements OnInit, OnDestroy {
 	resetCurrentPage() {
 		this.page = 1;
 	}
+
+	private loadBatchOrigins(): void {
+		this.batchOrigins.push(
+			{value: BatchOrigin.NORMAL, label:"Normal"},
+			{value: BatchOrigin.FEEDBACK, label:"User Feedback"},
+			{value: BatchOrigin.RE_REVIEW, label:"Re-review Batches"},
+		)
+	}
+
+	applyFilters() {
+		this.batches = [...this.batchesOriginal];
+
+		this.batches = this.batches.filter(batch => {
+			return !this.selectedBatchOrigin || batch.batchOrigin === this.selectedBatchOrigin;
+		  });
+	  }
 
 	protected readonly BatchType = BatchType;
 }

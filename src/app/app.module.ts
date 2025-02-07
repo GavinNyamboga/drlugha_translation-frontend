@@ -20,6 +20,7 @@ import { LayoutModule } from "app/layout/layout.module";
 import { AuthGuard } from "../@core/guards/auth.guard";
 import { HashLocationStrategy, LocationStrategy } from "@angular/common";
 import { HeadersInterceptor } from "../@core/http-interceptors/headers.interceptor";
+import { NgSelectModule } from "@ng-select/ng-select";
 
 const appRoutes: Routes = [
   {
@@ -62,6 +63,7 @@ const appRoutes: Routes = [
     CoreSidebarModule,
     CoreThemeCustomizerModule,
     LayoutModule,
+    NgSelectModule,
   ],
   bootstrap: [AppComponent],
   providers: [

@@ -16,5 +16,6 @@ export interface BatchDetailsSummaryReport {
 	audiosApproved: number;
 	audiosRejected: string;
 	language: string;
+	languageId: number;
 	status: string;
 }

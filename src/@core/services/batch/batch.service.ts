@@ -112,4 +112,8 @@ export class BatchService {
 	deleteBatchDetail(batchDetailsId: any) {
 		return this.httpClient.delete(`${environment.apiUrl}batch-details?batchDetailsId=${batchDetailsId}`);
 	}
+
+	reReviewBatch(languageId: number, batchDetails) {
+		return this.httpClient.post(`${environment.apiUrl}batch/review/${languageId}`, batchDetails);
+	}
 }
