@@ -1,27 +1,27 @@
 <form [formGroup]="createReReviewBatchForm" (ngSubmit)="createReReviewBatch()">
-  <div class="container">
-    <div class="row">
-      <div class="col-12">
-        <h2>Re-Review Batches</h2>
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col-lg-8 col-md-10 col-12">
+        <h2 class="text-center">Re-Review Batches</h2>
 
         <!-- Language Selection Dropdown -->
         <div class="form-group">
           <label for="languageSelect">Select Language</label>
           <ng-select id="languageSelect" [items]="languages" bindLabel="name" bindValue="languageId"
-            formControlName="selectedLanguage" placeholder="Choose a language" required>
+            formControlName="selectedLanguage" placeholder="Choose a language" required class="w-100">
           </ng-select>
         </div>
 
         <!-- File Upload (Disabled until language is selected) -->
         <div class="form-group mt-3">
           <label for="fileInput">Upload Excel File</label>
-          <input id="file" class="form-control" type="file" (change)="onFileChange($event)" accept=".xlsx, .xls, .csv"
+          <input id="fileInput" class="form-control" type="file" (change)="onFileChange($event)" accept=".xlsx, .xls, .csv"
             [disabled]="!createReReviewBatchForm.get('selectedLanguage')?.value" />
         </div>
 
         <!-- Submit Button -->
-        <div>
-          <button id="submit" class="btn btn-primary mt-2 float-end"
+        <div class="d-flex justify-content-end mt-3">
+          <button id="submit" class="btn btn-primary w-100"
             [disabled]="uploadedSentencesFromExcel.length === 0 || loading">
             <span *ngIf="loading">
               <i class="fa fa-spinner fa-spin"></i> Submitting...
@@ -40,7 +40,7 @@
                 <tr>
                   <th scope="col">No.</th>
                   <th scope="col">Batch</th>
-                  <th scope="col">Translated By User</th>
+                  <th class="d-none d-sm-table-cell" scope="col">Translated By User</th>
                   <th scope="col">English Sentence</th>
                   <th scope="col">Dataset Sentence</th>
                   <th scope="col">Model Sentences</th>
@@ -50,7 +50,7 @@
                 <tr *ngFor="let sentence of uploadedSentencesFromExcel.slice(0, 50); let i=index;">
                   <td>{{ i + 1 }}</td>
                   <td>{{ sentence.batch }}</td>
-                  <td>{{ sentence.translatedBy }}</td>
+                  <td class="d-none d-sm-table-cell">{{ sentence.translatedBy }}</td>
                   <td>{{ sentence.englishSentence }}</td>
                   <td>{{ sentence.datasetSentence }}</td>
                   <td>{{ sentence.modelSentence }}</td>
