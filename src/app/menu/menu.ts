@@ -47,7 +47,7 @@ export const menu: CoreMenu[] = [
         type: "item",
         icon: "refresh-ccw",
         url: "main/rereview",
-        role: [roles.Admin,roles.User, roles.Moderator],
+        role: [roles.Admin],
       },
     ],
   },
