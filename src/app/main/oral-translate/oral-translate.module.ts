@@ -14,6 +14,7 @@ import {CoreCommonModule} from "../../../@core/common.module";
 import {MainModule} from "../main.module";
 import {AssignmentsViewModule} from "../../../@core/components/assignments-view/assignments-view.module";
 import {ModerateModule} from "../text-translate/moderate/moderate.module";
+import { ExpertReviewComponent } from "./expert_review/expert-review.component";
 
 const routes: Routes= [
 	{
@@ -27,6 +28,10 @@ const routes: Routes= [
 			{
 				path: "moderate/:currentPage",
 				component: ModerateComponent,
+			},
+			{
+				path: "expert_review/:currentPage",
+				component: ExpertReviewComponent,
 			}
 		]
 	}

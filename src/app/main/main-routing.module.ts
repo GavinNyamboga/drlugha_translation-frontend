@@ -26,6 +26,12 @@ const routes: Routes = [
       {
         path: 'oral-translate',
         loadChildren: () => import('./oral-translate/oral-translate.module').then((m) => m.OralTranslateModule)
+
+      },
+      {
+        path: 'oral-expert-review',
+        loadChildren: () => import('./oral-translate/oral-translate.module').then((m) => m.OralTranslateModule)
+        
       },
       {
         path: 'oral-moderate',

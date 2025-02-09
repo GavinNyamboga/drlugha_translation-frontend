@@ -129,6 +129,14 @@ export const menu: CoreMenu[] = [
         url: "main/oral-moderate/moderate/reviewing",
         role: [roles.Admin, roles.Moderator],
       },
+      {
+        id: "expert-audio-review",
+        title: "Expert Audio Review",
+        type: "item",
+        icon: "user-check",
+        url: "main/oral-expert-review/reviewing",
+        role: [roles.Admin, roles.Moderator],
+      },
     ],
   },
 ];
