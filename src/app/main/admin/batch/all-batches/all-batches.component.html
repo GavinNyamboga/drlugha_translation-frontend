@@ -46,7 +46,7 @@
 						>
 					</div>
 				</div>
-				<div class="col-md-6 col-12 d-flex justify-content-md-end">
+				<!-- <div class="col-md-6 col-12 d-flex justify-content-md-end">
 					<div class="d-flex align-items-center justify-content-end pr-1 pb-1 pl-1 pl-md-0 pb-md-0">
 						<label class="d-flex align-items-center"
 						>Search<input
@@ -57,7 +57,7 @@
 							(search)="filterUpdate($event)"
 						/></label>
 					</div>
-				</div>
+				</div> -->
 			</div>
 			<div class="row mb-3">
 				<div class="col-md-4">
@@ -98,9 +98,9 @@
 						</tr>
 						<ng-container *ngIf="!loadingBatches" [formGroup]="editBatchesForm">
 							<ng-container formArrayName="batches">
-								<ng-container *ngFor="let batch of batches | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize;let batchIndex = index">
-									<tr [formGroupName]="(page - 1) * pageSize + batchIndex">
-										<td>{{ (page - 1) * pageSize + batchIndex + 1  }}</td>
+								<ng-container *ngFor="let batch of batches; let batchIndex = index">
+									<tr [formGroupName]="batchIndex">
+										<td>{{ (page - 1) * pageSize + batchIndex + 1 }}</td>
 										<ng-container *ngIf="editableRows[batch.batchNo]">
 											<td><input type="text" class="form-control" formControlName="source"></td>
 											<td><input type="text" class="form-control" formControlName="description"></td>
@@ -142,17 +142,15 @@
 					</table>
 				</div>
 			</div>
-			<div class="d-flex justify-content-center mt-2" *ngIf="batches?.length > pageSize">
-				<ngb-pagination [collectionSize]="batches.length"
-								[pageSize]="pageSize"
-								[maxSize]="7"
-								[(page)]="page"  aria-label="Default pagination">
-					<ng-template ngbPaginationPrevious
-					><span [data-feather]="'chevron-left'" [size]="'18'" [class]="'font-weight-bolder'"></span>
+			<div class="d-flex justify-content-center mt-2" *ngIf="totalElements > pageSize">
+				<ngb-pagination [collectionSize]="totalElements" [pageSize]="pageSize" [maxSize]="7" [(page)]="page"
+					(pageChange)="onPageChange($event)" aria-label="Default pagination">
+					<ng-template ngbPaginationPrevious>
+						<span [data-feather]="'chevron-left'" [size]="'18'" class="font-weight-bolder"></span>
 					</ng-template>
-					<ng-template ngbPaginationNext
-					><span [data-feather]="'chevron-right'" [size]="'18'" [class]="'font-weight-bolder'"></span
-					></ng-template>
+					<ng-template ngbPaginationNext>
+						<span [data-feather]="'chevron-right'" [size]="'18'" class="font-weight-bolder"></span>
+					</ng-template>
 				</ngb-pagination>
 			</div>
 		</ng-template>

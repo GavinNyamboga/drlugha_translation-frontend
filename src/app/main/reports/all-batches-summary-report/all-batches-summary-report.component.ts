@@ -33,6 +33,8 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
   totalStats: TotalStats;
   pageSize = 25;
   page = 1;
+  totalElements: number = 25;
+  totalPages: number = 1;
   loadingReport = true;
   selectedOption: BatchType = BatchType.TEXT;
   unsubscribe$ = new Subject<void>();
@@ -42,6 +44,7 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
   languages: Language[] = [];
   selectedStatus: string | null = null;
   selectedLanguage: string | null = null;
+  languageId: number | null = null;
   batchStatuses: { value: BatchStatus; label: string }[] = [];
 
   constructor(
@@ -72,6 +75,56 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
     this.unsubscribe$.complete();
   }
 
+  onPageChange(newPage: number) {
+    this.page = newPage;
+    this.loadingReport = true;
+    this.batchDetailsReport = [];
+    this.batchService.getAllBatchDetailsReportSummary(this.selectedOption, this.page - 1, this.pageSize, this.languageId, this.selectedStatus)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: (response) => {
+          this.batchDetailsReport = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
+          this.loadingReport = false;
+
+          // Reset selection when page changes
+          this.selectedBatches.clear();
+          this.allSelected = false;
+        },
+        error: (error) => {
+          this.loadingReport = false;
+          this.toastr.error("Error getting batch details report");
+        }
+      });
+  }
+
+  onPageSizeChange(newSize: number) {
+    this.pageSize = newSize;
+    this.page = 1;
+    this.loadingReport = true;
+    this.batchDetailsReport = [];
+
+    this.batchService.getAllBatchDetailsReportSummary(this.selectedOption, 0, this.pageSize, this.languageId, this.selectedStatus)
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: (response) => {
+          this.batchDetailsReport = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
+          this.loadingReport = false;
+
+          // Reset selection when page size changes
+          this.selectedBatches.clear();
+          this.allSelected = false;
+        },
+        error: (error) => {
+          this.loadingReport = false;
+          this.toastr.error("Error getting batch details report");
+        }
+      });
+  }
+
   private getUploadedAndTranslatedSentences() {
     this.sentenceservice.getTotalUploadedAndTranslatedSentences().subscribe({
       next: (response: TotalStats) => {
@@ -85,16 +138,18 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
 
   private getBatchDetailsReport() {
     this.loadingReport = true;
-    this.unsubscribe$ = new Subject<void>();
-    this.batchDetailsReportOriginal = [];
 
-    this.batchService.getAllBatchDetailsReportSummary(this.selectedOption)
+    this.batchService.getAllBatchDetailsReportSummary(this.selectedOption, this.page - 1, this.pageSize, this.languageId, this.selectedStatus)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (response) => {
-          this.batchDetailsReportOriginal = response;
-          this.batchDetailsReport = [...this.batchDetailsReportOriginal];
+          this.batchDetailsReport = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
           this.loadingReport = false;
+
+          this.selectedBatches.clear();
+          this.allSelected = false;
         },
         error: (error) => {
           this.loadingReport = false;
@@ -251,6 +306,7 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
     this.selectedOption = this.mapStringToBatchType($event.nextId);
     this.unsubscribe$.next();
     this.page = 1;
+    this.batchDetailsReport = [];
 
     this.selectedStatus = null;
     this.selectedLanguage = null;
@@ -295,13 +351,33 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
   }
 
   applyFilters() {
-    this.batchDetailsReport = this.batchDetailsReportOriginal.filter(report => {
-      const matchesLanguage = !this.selectedLanguage || report.language.trim().toLowerCase() === this.selectedLanguage.trim().toLowerCase();
-      const matchesStatus = !this.selectedStatus || report.status.trim().toLowerCase() === this.selectedStatus.trim().toLowerCase();
+    this.loadingReport = true;
+    this.batchDetailsReport = [];
+    this.page = 1; //reset page
 
-      return matchesLanguage && matchesStatus;
-    });
+
+    this.batchService.getAllBatchDetailsReportSummary(
+        this.selectedOption,
+        this.page - 1,
+        this.pageSize,
+        this.languageId,
+        this.selectedStatus
+      )
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe({
+        next: (response) => {
+          this.batchDetailsReport = response.content;
+          this.totalElements = response.totalElements;
+          this.totalPages = response.totalPages;
+          this.loadingReport = false;
+        },
+        error: () => {
+          this.loadingReport = false;
+          this.toastr.error("Error applying filters.");
+        }
+      });
   }
+  
 
   private getLanguages(): void {
     this.languageService.getLanguages().subscribe(
@@ -318,8 +394,8 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
     if (this.selectedOption === BatchType.AUDIO) {
       this.batchStatuses = [
         { value: BatchStatus.ASSIGNED_RECORDER, label: "Assigned Transcriber" },
-        { value: BatchStatus.RECORDED, label: "Transcribed" },
-        { value: BatchStatus.ASSIGNED_AUDIO_VERIFIER, label: "Audio Recorded" },
+        { value: BatchStatus.TRANSCRIBED, label: "Transcribed" },
+        { value: BatchStatus.ASSIGNED_AUDIO_VERIFIER, label: "Audio Assigned Verifier" },
         { value: BatchStatus.AUDIO_VERIFIED, label: "Audio Reviewed" }
       ];
     } else if (this.selectedOption === BatchType.TEXT) {

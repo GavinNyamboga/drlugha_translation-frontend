@@ -94,14 +94,13 @@
 				<div class="col-md-6 col-12">
 					<div class="d-flex justify-content-between align-items-center m-1">
 						<label class="d-flex align-items-center">Show
-							<ng-select style="width: 70px" class="mx-25" (ngModelChange)="resetCurrentPage()"
-								[(ngModel)]="pageSize" [clearable]="false">
+							<ng-select style="width: 70px" class="mx-25" [(ngModel)]="pageSize"
+								(ngModelChange)="onPageSizeChange($event)" [clearable]="false">
 								<ng-option value="25">25</ng-option>
 								<ng-option value="50">50</ng-option>
 								<ng-option value="100">100</ng-option>
 								<ng-option value="250">250</ng-option>
-							</ng-select>
-							entries</label>
+							</ng-select> entries</label>
 					</div>
 				</div>
 				<div class="col-md-6 col-12 d-flex justify-content-md-end">
@@ -122,12 +121,9 @@
 			<div class="row mb-3">
 				<div class="col-md-4">
 					<label for="languageFilter">Filter by Language</label>
-					<ng-select  id="languageFilter"
-					[(ngModel)]="selectedLanguage" 
-					(change)="applyFilters()"
-					[clearable]="true"
-					placeholder="Select Language">
-						<ng-option *ngFor="let lang of languages" [value]="lang.name">{{ lang.name }}</ng-option>
+					<ng-select id="languageFilter" [(ngModel)]="languageId" (change)="applyFilters()"
+						[clearable]="true" placeholder="Select Language">
+						<ng-option *ngFor="let lang of languages" [value]="lang.languageId">{{ lang.name }}</ng-option>
 					</ng-select>
 				</div>
 
@@ -135,7 +131,7 @@
 					<label for="statusFilter">Filter by Status</label>
 					<ng-select id="statusFilter" [(ngModel)]="selectedStatus" (change)="applyFilters()"
 						[clearable]="true" placeholder="Select Status">
-						<ng-option *ngFor="let status of batchStatuses" [value]="status.label">
+						<ng-option *ngFor="let status of batchStatuses" [value]="status.value">
 							{{ status.label }}
 						</ng-option>
 					</ng-select>
@@ -231,8 +227,7 @@
 							</td>
 						</tr>
 
-						<ng-container
-							*ngFor="let report of batchDetailsReport | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let reportIndex = index">
+						<ng-container *ngFor="let report of batchDetailsReport; let reportIndex = index">
 							<tr>
 								<td *ngIf="isAdmin" class="text-center">
 									<div class="custom-control custom-checkbox">
@@ -301,14 +296,15 @@
 				</table>
 			</div>
 
-			<div class="d-flex justify-content-center mt-2" *ngIf="batchDetailsReport?.length > pageSize">
-				<ngb-pagination [collectionSize]="batchDetailsReport.length" [pageSize]="pageSize" [maxSize]="7"
-					[(page)]="page" aria-label="Default pagination">
-					<ng-template ngbPaginationPrevious><span [data-feather]="'chevron-left'" [size]="'18'"
-							[class]="'font-weight-bolder'"></span>
+			<div class="d-flex justify-content-center mt-2" *ngIf="totalElements > pageSize">
+				<ngb-pagination [collectionSize]="totalElements" [pageSize]="pageSize" [maxSize]="7" [(page)]="page"
+					(pageChange)="onPageChange($event)" aria-label="Default pagination">
+					<ng-template ngbPaginationPrevious>
+						<span [data-feather]="'chevron-left'" [size]="'18'" class="font-weight-bolder"></span>
 					</ng-template>
-					<ng-template ngbPaginationNext><span [data-feather]="'chevron-right'" [size]="'18'"
-							[class]="'font-weight-bolder'"></span></ng-template>
+					<ng-template ngbPaginationNext>
+						<span [data-feather]="'chevron-right'" [size]="'18'" class="font-weight-bolder"></span>
+					</ng-template>
 				</ngb-pagination>
 			</div>
 		</ng-template>

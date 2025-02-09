@@ -1,13 +1,14 @@
 import { Injectable } from "@angular/core";
-import {HttpClient, HttpParams} from "@angular/common/http";
-import {BehaviorSubject, Observable} from "rxjs";
-import {Batch} from "../../models/batch/batch";
-import {environment} from "../../../environments/environment";
-import {BatchProgressStatus} from "../../enums/batch-progress-status";
-import {BatchDetailProgressReport} from "../../models/batch/batch-detail-progress-report";
-import { map} from "rxjs/operators";
-import {BatchDetailAssignments} from "../../models/batch/batch-detail-assignments";
-import {BatchType} from "../../enums/batch-type";
+import { HttpClient, HttpParams } from "@angular/common/http";
+import { BehaviorSubject, Observable } from "rxjs";
+import { Batch } from "../../models/batch/batch";
+import { environment } from "../../../environments/environment";
+import { BatchProgressStatus } from "../../enums/batch-progress-status";
+import { BatchDetailProgressReport } from "../../models/batch/batch-detail-progress-report";
+import { map } from "rxjs/operators";
+import { BatchDetailAssignments } from "../../models/batch/batch-detail-assignments";
+import { BatchType } from "../../enums/batch-type";
+import { PaginatedBatchResponse } from "@core/models/batch/batch-paginated";
 
 @Injectable({
 	providedIn: "root"
@@ -33,13 +34,24 @@ export class BatchService {
 		return this.httpClient.delete(`${environment.apiUrl}batch?batchNo=${batchNo}`);
 	}
 
-	getBatches(selectedOption: BatchType): Observable<Batch[]> {
-		return this.httpClient.get<Batch[]>(`${environment.apiUrl}all/batches?batchType=${selectedOption}`);
-	  }
+	getBatches(selectedOption: BatchType, page: number, pageSize: number, batchOrigin: string): Observable<PaginatedBatchResponse> {
+		let params: any = {
+			batchType: selectedOption,
+			page: page,
+			pageSize: pageSize
+		};
 
-	  getBatchDetails(batchId: number): Observable<any> {
+		if (batchOrigin !== null && batchOrigin !== undefined) {
+			params.batchOrigin = batchOrigin;
+		}
+
+		return this.httpClient.get<PaginatedBatchResponse>(`${environment.apiUrl}all/batches`,{params}
+		);
+	}
+
+	getBatchDetails(batchId: number): Observable<any> {
 		return this.httpClient.get(`${environment.apiUrl}batch-details/${batchId}`);
-	  }
+	}
 
 	assignTranslator(batchId, translator): Observable<any> {
 		return this.httpClient.post(`${environment.apiUrl}add/batch-details/${batchId}`, translator);
@@ -57,9 +69,9 @@ export class BatchService {
 		const params = new HttpParams().set('role', role);
 		return this.httpClient.put(
 			`${environment.apiUrl}assign/${batchDetailsId}`,
-			 userIds,
-			 {params}
-			);
+			userIds,
+			{ params }
+		);
 	}
 
 	assignRecorder(batchDetailsId: any, recorder: { recordedByIds: number[] }): Observable<any> {
@@ -96,9 +108,23 @@ export class BatchService {
 		return this.httpClient.get<any>(`${environment.apiUrl}batch-details/completed-sentences?batchDetailsId=${batchDetailsId}`);
 	}
 
-	getAllBatchDetailsReportSummary(selectedOption: BatchType) {
-		return this.httpClient.get<any>(`${environment.apiUrl}stats/all-batch-details?batchType=${selectedOption}`);
-	  }
+	getAllBatchDetailsReportSummary(batchType: BatchType, page: number, pageSize: number, languageId: number, status: string) {
+		let params: any = {
+			batchType: batchType,
+			page: page.toString(),
+			pageSize: pageSize.toString(),
+		};
+
+		if (languageId !== null && languageId !== undefined) {
+			params.languageId = languageId.toString();
+		}
+
+		if (status !== null && status !== undefined) {
+			params.status = status;
+		}
+
+		return this.httpClient.get<any>(`${environment.apiUrl}stats/all-batch-details`, { params });
+	}
 
 	getReportPerBatchDetailsId(batchDetailsId: number) {
 		return this.httpClient.get<any>(`${environment.apiUrl}batch-details/expert-reviewed?batchDetailsId=${batchDetailsId}`);
