@@ -134,7 +134,7 @@ export const menu: CoreMenu[] = [
         title: "Expert Audio Review",
         type: "item",
         icon: "user-check",
-        url: "main/oral-expert-review/reviewing",
+        url: "main/oral-expert-review/review/reviewing",
         role: [roles.Admin, roles.Moderator],
       },
     ],

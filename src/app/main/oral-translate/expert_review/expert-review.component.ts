@@ -29,7 +29,7 @@ export class ExpertReviewComponent implements OnInit {
 		private toastr: ToastrService,
 		private assignmentsConfig: AssignmentsProgressConfigService
 	) {
-		this.assignmentsConfig.defaultUrl = "/main/oral-moderate/moderate/reviewing";
+		this.assignmentsConfig.defaultUrl = "/main/oral-expert-review/reviewing";
 		this.assignmentsConfig.batchProgress = BatchProgressStatus.audioReviewing;
 		this.assignmentsConfig.badgeLabels = BatchProgressStatus.audioReviewing;
 	}

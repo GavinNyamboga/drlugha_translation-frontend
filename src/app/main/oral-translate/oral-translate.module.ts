@@ -30,7 +30,7 @@ const routes: Routes= [
 				component: ModerateComponent,
 			},
 			{
-				path: "expert_review/:currentPage",
+				path: "review/:currentPage",
 				component: ExpertReviewComponent,
 			}
 		]
@@ -45,6 +45,7 @@ const routes: Routes= [
 		BatchVoiceTranslationsComponent,
 		SentencesToRecordComponent,
 		AudiosToModerateComponent,
+		ExpertReviewComponent,
 	],
 	imports: [
 		CommonModule,
