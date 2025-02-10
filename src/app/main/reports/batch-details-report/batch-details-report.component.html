@@ -52,7 +52,7 @@
                 <tbody>
                 <ng-container *ngIf="batchDetailsReport?.completedSentences?.length > 0; else showMessage">
                     <tr *ngFor="let sentence of batchDetailsReport?.completedSentences | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize; let i = index">
-                        <ng-container *ngIf="sentence.audioDetails?.length>0">
+                        <ng-container>
                             <td>{{ (page - 1) * pageSize + i + 1 }}</td>
                             <td>
                                 <span *ngIf="batchDetailsReport?.batchType == BatchType.AUDIO">

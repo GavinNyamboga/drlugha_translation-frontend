@@ -50,11 +50,12 @@ export class BatchDetailsReportComponent
       .subscribe({
         next: (response) => {
           // Cap batch size
-          console.log('Batch Details Report Response:', response);
-          if (response.completedSentences.length > this.maxBatchSize) {
-            response.completedSentences = response.completedSentences.slice(0, this.maxBatchSize);
-            this.toastr.warning("Batch size exceeds maximum limit. Only first 500 sentences will be shown.");
-          }
+          response.completedSentences = response.completedSentences;
+
+          // if (response.completedSentences.length > this.maxBatchSize) {
+          //   response.completedSentences = response.completedSentences.slice(0, this.maxBatchSize);
+          //   this.toastr.warning("Batch size exceeds maximum limit. Only first 500 sentences will be shown.");
+          // }
 
           // Check for duplicates based on audio URL
           //const uniqueSentences = this.removeDuplicateAudioURLs(response.completedSentences);
