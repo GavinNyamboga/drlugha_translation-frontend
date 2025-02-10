@@ -357,12 +357,12 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
 
 
     this.batchService.getAllBatchDetailsReportSummary(
-        this.selectedOption,
-        this.page - 1,
-        this.pageSize,
-        this.languageId,
-        this.selectedStatus
-      )
+      this.selectedOption,
+      this.page - 1,
+      this.pageSize,
+      this.languageId,
+      this.selectedStatus
+    )
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe({
         next: (response) => {
@@ -377,7 +377,7 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
         }
       });
   }
-  
+
 
   private getLanguages(): void {
     this.languageService.getLanguages().subscribe(
@@ -403,7 +403,11 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
         { value: BatchStatus.ASSIGNED_TRANSLATOR, label: "Assigned Translator" },
         { value: BatchStatus.TRANSLATED, label: "Translated" },
         { value: BatchStatus.TRANSLATION_VERIFIED, label: "Moderator Reviewed" },
-        { value: BatchStatus.SECOND_VERIFICATION_DONE, label: "Expert Reviewed" }
+        { value: BatchStatus.SECOND_VERIFICATION_DONE, label: "Expert Reviewed" },
+        { value: BatchStatus.ASSIGNED_RECORDER, label: "Audio Recorder Assigned" },
+        { value: BatchStatus.RECORDED, label: "Audio recorded" },
+        { value: BatchStatus.ASSIGNED_AUDIO_VERIFIER, label: "Audio Assigned Verifier" },
+        { value: BatchStatus.AUDIO_VERIFIED, label: "Audio Verified" },
       ];
     }
   }
