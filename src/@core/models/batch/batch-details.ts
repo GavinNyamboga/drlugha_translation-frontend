@@ -4,6 +4,7 @@ export interface BatchDetails {
 	batchNo: number;
 	audioRecorded: boolean;
 	audioReviewed:	boolean;
+	audioExpertReviewed: boolean;
 	batchDescription: string;
 	batchDetailsId:	number;
 	expertReviewed:	boolean;

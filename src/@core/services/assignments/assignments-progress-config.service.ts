@@ -1,7 +1,7 @@
-import {Injectable} from "@angular/core";
-import {BehaviorSubject} from "rxjs";
-import {BatchProgressStatus} from "../../enums/batch-progress-status";
-import {BatchDetails} from "../../models/batch/batch-details";
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+import { BatchProgressStatus } from "../../enums/batch-progress-status";
+import { BatchDetails } from "../../models/batch/batch-details";
 
 @Injectable({
 	providedIn: "root"
@@ -11,7 +11,7 @@ export class AssignmentsProgressConfigService {
 	private _currentIndex$ = new BehaviorSubject<number>(0);
 	private _totalCount$ = new BehaviorSubject<number>(0);
 	private _defaultUrl$ = new BehaviorSubject<string>("");
-	private _badgeLabels$ = new BehaviorSubject<{pending: string, completed: string}>(null);
+	private _badgeLabels$ = new BehaviorSubject<{ pending: string, completed: string }>(null);
 	private _batchProgress$ = new BehaviorSubject<BatchProgressStatus>(null);
 	private _batchDetailCompleted$ = new BehaviorSubject<boolean>(null);
 	private _showTranscriptionAssignments$ = new BehaviorSubject<boolean>(true);
@@ -69,31 +69,31 @@ export class AssignmentsProgressConfigService {
 
 	set badgeLabels(batchProgress: BatchProgressStatus) {
 		switch (batchProgress) {
-		case BatchProgressStatus.translation:
-			this._badgeLabels$.next({
-				pending: "Pending",
-				completed: "Translated"
-			});
-			return;
-		case BatchProgressStatus.review:
-		case BatchProgressStatus.expertReview:
-		case BatchProgressStatus.audioReviewing:
-			this._badgeLabels$.next({
-				pending: "Pending Review",
-				completed: "Reviewed"
-			});
-			return;
-		case BatchProgressStatus.audioRecording:
-			this._badgeLabels$.next({
-				pending: "Pending Recording",
-				completed: "Recorded"
-			});
-			return;
-		default:
-			this._badgeLabels$.next({
-				pending: "Pending",
-				completed: "Completed"
-			});
+			case BatchProgressStatus.TRANSLATION:
+				this._badgeLabels$.next({
+					pending: "Pending",
+					completed: "Translated"
+				});
+				return;
+			case BatchProgressStatus.REVIEW:
+			case BatchProgressStatus.EXPERT_REVIEW:
+			case BatchProgressStatus.AUDIO_REVIEWING:
+				this._badgeLabels$.next({
+					pending: "Pending Review",
+					completed: "Reviewed"
+				});
+				return;
+			case BatchProgressStatus.AUDIO_RECORDING:
+				this._badgeLabels$.next({
+					pending: "Pending Recording",
+					completed: "Recorded"
+				});
+				return;
+			default:
+				this._badgeLabels$.next({
+					pending: "Pending",
+					completed: "Completed"
+				});
 		}
 	}
 
@@ -102,19 +102,22 @@ export class AssignmentsProgressConfigService {
 	}
 
 	isBatchDetailCompleted(batchDetails: BatchDetails): boolean {
+		console.log("PROGRESS..." + this._batchProgress$.getValue());
 		switch (this._batchProgress$.getValue()) {
-		case BatchProgressStatus.translation:
-			return batchDetails.translated;
-		case BatchProgressStatus.review:
-			return batchDetails.reviewed;
-		case BatchProgressStatus.expertReview:
-			return batchDetails.expertReviewed;
-		case BatchProgressStatus.audioReviewing:
-			return batchDetails.audioReviewed;
-		case BatchProgressStatus.audioRecording:
-			return batchDetails.audioRecorded;
-		default:
-			return null;
+			case BatchProgressStatus.TRANSLATION:
+				return batchDetails.translated;
+			case BatchProgressStatus.REVIEW:
+				return batchDetails.reviewed;
+			case BatchProgressStatus.EXPERT_REVIEW:
+				return batchDetails.expertReviewed;
+			case BatchProgressStatus.AUDIO_REVIEWING:
+				return batchDetails.audioReviewed;
+			case BatchProgressStatus.AUDIO_RECORDING:
+				return batchDetails.audioRecorded;
+			case BatchProgressStatus.AUDIO_EXPERT_REVIEWING:
+				return batchDetails.audioExpertReviewed;
+			default:
+				return null;
 		}
 	}
 

@@ -14,7 +14,7 @@ import {CoreCommonModule} from "../../../@core/common.module";
 import {MainModule} from "../main.module";
 import {AssignmentsViewModule} from "../../../@core/components/assignments-view/assignments-view.module";
 import {ModerateModule} from "../text-translate/moderate/moderate.module";
-import { ExpertReviewComponent } from "./expert_review/expert-review.component";
+import { ExpertAudioReviewComponent } from "./review/expert-review.component";
 
 const routes: Routes= [
 	{
@@ -31,7 +31,7 @@ const routes: Routes= [
 			},
 			{
 				path: "review/:currentPage",
-				component: ExpertReviewComponent,
+				component: ExpertAudioReviewComponent,
 			}
 		]
 	}
@@ -45,7 +45,7 @@ const routes: Routes= [
 		BatchVoiceTranslationsComponent,
 		SentencesToRecordComponent,
 		AudiosToModerateComponent,
-		ExpertReviewComponent,
+		ExpertAudioReviewComponent,
 	],
 	imports: [
 		CommonModule,

@@ -12,7 +12,7 @@ export class TranslateProgressConfigComponent {
 
 	constructor() {
 		this.assignmentsConfig.defaultUrl = "/main/text-translate/translate/sentences";
-		this.assignmentsConfig.batchProgress = BatchProgressStatus.translation;
-		this.assignmentsConfig.badgeLabels = BatchProgressStatus.translation;
+		this.assignmentsConfig.batchProgress = BatchProgressStatus.TRANSLATION;
+		this.assignmentsConfig.badgeLabels = BatchProgressStatus.TRANSLATION;
 	}
 }

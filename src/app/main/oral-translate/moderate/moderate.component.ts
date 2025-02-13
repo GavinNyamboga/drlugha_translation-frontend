@@ -20,6 +20,7 @@ export class ModerateComponent implements OnInit {
 	currentAssignment: any;
 	currentIndex = 0;
 	audioAssignment: AudioAssignmentModerate;
+	batchProgressStatus = BatchProgressStatus.AUDIO_REVIEWING;
 
 	constructor(
 		private routes: Router,
@@ -30,8 +31,8 @@ export class ModerateComponent implements OnInit {
 		private assignmentsConfig: AssignmentsProgressConfigService
 	) {
 		this.assignmentsConfig.defaultUrl = "/main/oral-moderate/moderate/reviewing";
-		this.assignmentsConfig.batchProgress = BatchProgressStatus.audioReviewing;
-		this.assignmentsConfig.badgeLabels = BatchProgressStatus.audioReviewing;
+		this.assignmentsConfig.batchProgress = this.batchProgressStatus;
+		this.assignmentsConfig.badgeLabels = this.batchProgressStatus;
 	}
 
 	ngOnInit(): void {

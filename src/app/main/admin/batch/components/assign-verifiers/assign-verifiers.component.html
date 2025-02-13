@@ -70,7 +70,7 @@
                     </div>
                 </div>
                 <div class="mt-3">
-                    <button type="submit" class="btn btn-primary">Assign Second Reviewer</button>
+                    <button type="submit" class="btn btn-primary">Assign Expert Reviewer</button>
                 </div>
             </div>
         </form>
@@ -142,6 +142,36 @@
                     <div class="mt-3">
                         <button type="submit" class="btn btn-primary">Assign Audio Verifier</button>
                     </div>
+                </div>
+            </form>
+            <div class="alert alert-warning mt-3 p-2"
+                *ngIf="batchDetail.batchStatus == batchStatus.ASSIGNED_AUDIO_VERIFIER">
+                <i [data-feather]="'info'" class="me-1"></i>
+                Awaiting audio verifier to complete audio verification
+            </div>
+            <div class="mt-3 d-flex flex-row justify-content-end">
+                <button class="btn btn-outline-primary pull-right" matStepperNext>
+                    Next
+                    <span class="bi bi-arrow-right-circle ps-1"></span>
+                </button>
+            </div>
+        </mat-step>
+        <mat-step label="Audio Expert Reviewer" [completed]="progress >= 10">
+            <form [formGroup]="audioExpertReviewer" (ngSubmit)="assignAudioExpertReviewer()">
+                <div class="mt-2">
+                    <ng-select [items]="users" bindLabel="username" bindValue="userId" formControlName="audioExpertReviewer"
+                        placeholder="Select audio expert reviewer" [appendTo]="'body'"
+                        [ngClass]="{'is-invalid': audioExpertReviewer.controls['audioExpertReviewer'].touched && audioExpertReviewer.controls['audioExpertReviewer'].invalid}">
+                    </ng-select>
+                    <div *ngIf="audioExpertReviewer.controls['audioExpertReviewer'].touched && audioExpertReviewer.controls['audioExpertReviewer'].invalid"
+                        class="invalid-feedback">
+                        <div *ngIf="audioExpertReviewer.controls['audioExpertReviewer'].errors.required">
+                            Audio Expert Reviewer is required
+                        </div>
+                    </div>
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Assign Audio Expert Reviewer</button>
+                        </div>
                 </div>
             </form>
             <div class="alert alert-warning mt-3 p-2"

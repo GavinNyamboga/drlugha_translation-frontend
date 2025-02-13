@@ -94,8 +94,8 @@ export class BatchService {
 		return this.httpClient.put(`${environment.apiUrl}batch-status/recorded/${batchDetailsId}`, {});
 	}
 
-	markAudioAsReviewed(batchDetailsId: number) {
-		return this.httpClient.put(`${environment.apiUrl}batch-status/audioVerified/${batchDetailsId}`, {});
+	markAudioAsReviewed(batchDetailsId: number, expertReview: boolean) {
+		return this.httpClient.put(`${environment.apiUrl}batch-status/audioVerified/${batchDetailsId}?expertReview=${expertReview}`, {});
 	}
 
 	getUserBatchesByStatus(userId: number, status: BatchProgressStatus) {

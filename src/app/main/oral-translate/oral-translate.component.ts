@@ -21,7 +21,7 @@ export class OralTranslateComponent implements OnInit, OnDestroy {
 	currentUser: LoggedInUser;
 	batchDetailAssignments: BatchDetailAssignments;
 	batchDetailsId: number;
-	currentPage: "recording" | "reviewing" = "recording";
+	currentPage: "recording" | "reviewing" | "expert-reviewing" = "recording";
 	constructor(
 		private location: Location,
 		private batchService: BatchService,
@@ -48,7 +48,14 @@ export class OralTranslateComponent implements OnInit, OnDestroy {
 	}
 
 	getUserBatches() {
-		const progressStatus = this.currentPage == "recording" ? BatchProgressStatus.audioRecording : BatchProgressStatus.audioReviewing;
+		let progressStatus = 0;
+		if (this.currentPage == "recording")
+			progressStatus = BatchProgressStatus.AUDIO_RECORDING;
+		else if (this.currentPage == "reviewing")
+			progressStatus = BatchProgressStatus.AUDIO_REVIEWING;
+		else if (this.currentPage == "expert-reviewing")
+			progressStatus = BatchProgressStatus.AUDIO_EXPERT_REVIEWING;
+
 		this.batchService.getUserBatchesByStatus(this.currentUser.userId, progressStatus);
 	}
 

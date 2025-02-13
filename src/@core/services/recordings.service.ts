@@ -1,8 +1,8 @@
-import {HttpClient, HttpHeaders} from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import {AudioAssignmentModerate} from "../models/audio/audio-assignment-moderate";
-import {environment} from "../../environments/environment";
+import { AudioAssignmentModerate } from "../models/audio/audio-assignment-moderate";
+import { environment } from "../../environments/environment";
 
 @Injectable({
 	providedIn: "root"
@@ -24,12 +24,32 @@ export class RecordingsService {
 		return this._http.get<AudioAssignmentModerate>(environment.apiUrl + "reviewer/audio?userId=" + userId + params);
 	}
 
-	approveVoiceRecording(voiceId: number, payload: any): Observable<any> {
-		return this._http.put(environment.apiUrl + "approve/voice/" +voiceId, payload);
+	fetchExpertReviewersPendingAudios(userId: number, batchDetailsId: number): Observable<AudioAssignmentModerate> {
+		let params = "";
+		if (batchDetailsId)
+			params = "&batchDetailsId=" + batchDetailsId;
+
+		return this._http.get<AudioAssignmentModerate>(environment.apiUrl + "voices/expert/audio?userId=" + userId + params);
 	}
 
-	rejectVoiceRecording(voiceId: number, payload: any): Observable<any> {
-		return this._http.put(environment.apiUrl + "reject/voice/" +voiceId, payload);
+	approveVoiceRecording(voiceId: number, payload: any): Observable<any> {
+		return this._http.put(environment.apiUrl + "approve/voice/" + voiceId, payload);
+	}
+
+	rejectVoiceRecording(voiceId: number, payload: any, rejectionReason: string): Observable<any> {
+		let params = "";
+		if (rejectionReason)
+			params = "?rejectionReason=" + rejectionReason;
+
+		return this._http.put(environment.apiUrl + "reject/voice/" + voiceId + params, payload);
+	}
+
+	expertReviewVoiceRecording(voiceId: number, payload: any, rejectionReason: string, approve: boolean): Observable<any> {
+		let params = "?approve=" + approve;
+		if (rejectionReason)
+			params += "&rejectionReason=" + rejectionReason;
+
+		return this._http.put(environment.apiUrl + "voice/expert/review/" + voiceId + params, payload);
 	}
 
 	//listen to a voice recordings  
@@ -53,7 +73,7 @@ export class RecordingsService {
 		return this._http.post(`${environment.apiUrl}storage/uploadFile/${id}`, formData);
 	};
 
-	public updateAudioFile (file: string | Blob, id: number) {
+	public updateAudioFile(file: string | Blob, id: number) {
 		const formData = new FormData();
 		formData.append("file", file);
 
@@ -62,7 +82,7 @@ export class RecordingsService {
 			responseType: "application/json",
 		});
 
-		return this._http.put(`${environment.apiUrl}storage/updateFile/${id}`, formData, {headers: headers});
+		return this._http.put(`${environment.apiUrl}storage/updateFile/${id}`, formData, { headers: headers });
 	}
 
 	//Upload voice recording

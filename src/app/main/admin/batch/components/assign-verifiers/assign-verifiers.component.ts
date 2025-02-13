@@ -27,6 +27,7 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 	secondReviewerForm: UntypedFormGroup;
 	recorderForm: UntypedFormGroup;
 	audioVerifier: UntypedFormGroup;
+	audioExpertReviewer: UntypedFormGroup;
 	progress: number;
 	completedSentences: CompletedSentence[] = [];
 	assigneeTitle: string;
@@ -75,6 +76,10 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 		this.audioVerifier = this.fb.group({
 			audioVerifier: ["", Validators.required]
 		});
+
+		this.audioExpertReviewer = this.fb.group({
+			audioExpertReviewer: ["", Validators.required]
+		})
 	}
 
 	private setFormDefaultValues(): void {
@@ -96,6 +101,10 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 
 		this.audioVerifier.patchValue({
 			audioVerifier: this.batchDetail?.audioVerifiedBy?.userId
+		});
+
+		this.audioExpertReviewer.patchValue({
+			audioExpertReviewer: this.batchDetail?.audioExpertReviewedBy?.userId
 		});
 	}
 
@@ -224,6 +233,30 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 			}
 		);
 	}
+
+	assignAudioExpertReviewer(): void {
+		this.audioExpertReviewer.markAllAsTouched();
+		if (this.audioExpertReviewer.invalid) {
+			return;
+		}
+
+		const { audioExpertReviewer } = this.audioExpertReviewer.value;
+		const payload = {
+			userIds: [audioExpertReviewer]
+		};
+
+		this.batchService.assignUsersToBatch(this.batchDetail.batchDetailsId, payload, UserBatchRole.EXPERT_AUDIO_REVIEWER).subscribe(
+			(res) => {
+				this.addBatchDetails.emit(res);
+				this.toastService.success("Audio expert reviewer added successfully");
+			},
+			(error) => {
+				console.log(error);
+				this.toastService.error("Something went wrong. Please try again later");
+			}
+		);
+	}
+
 
 	tabSelectionChange(selectionEvent: StepperSelectionEvent) {
 		if (selectionEvent.selectedIndex == 5) {

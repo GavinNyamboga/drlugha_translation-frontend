@@ -106,7 +106,7 @@ export class TranslateComponent extends TranslateProgressConfigComponent impleme
 	}
 
 	getUserBatches() {
-		this.batchService.getUserBatchesByStatus(this.currentUser, BatchProgressStatus.translation);
+		this.batchService.getUserBatchesByStatus(this.currentUser, BatchProgressStatus.TRANSLATION);
 	}
 
 	setPageTitle() {

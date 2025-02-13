@@ -27,7 +27,7 @@ export class ModerateProgressConfigComponent {
 				approveTranslationUrl: "approve/translatedsentence/",
 				rejectTranslationUrl: "reject/translatedsentence",
 				markAsReviewedUrl: "textVerified",
-				task: BatchProgressStatus.review
+				task: BatchProgressStatus.REVIEW
 			};
 		}else {
 			this.currentRouteDetails = {
@@ -35,7 +35,7 @@ export class ModerateProgressConfigComponent {
 				approveTranslationUrl: "translatedsentence/expert-approve/",
 				rejectTranslationUrl: "translatedsentence/expert-reject",
 				markAsReviewedUrl: "secondVerification",
-				task: BatchProgressStatus.expertReview
+				task: BatchProgressStatus.EXPERT_REVIEW
 			};
 		}
 

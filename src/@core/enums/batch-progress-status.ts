@@ -1,7 +1,8 @@
 export enum BatchProgressStatus {
-	translation,
-	review,
-	expertReview,
-	audioRecording,
-	audioReviewing
+	TRANSLATION,
+    REVIEW,
+    EXPERT_REVIEW,
+    AUDIO_RECORDING,
+    AUDIO_REVIEWING,
+    AUDIO_EXPERT_REVIEWING,
 }

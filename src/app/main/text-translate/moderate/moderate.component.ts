@@ -1,12 +1,12 @@
-import {Component, OnInit} from "@angular/core";
-import {ActivatedRoute, Router} from "@angular/router";
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ModerationAssignment } from "@core/models/moderation/moderation-assignment";
-import {BatchProgressStatus} from "../../../../@core/enums/batch-progress-status";
-import {BatchService} from "../../../../@core/services/batch/batch.service";
-import {AuthService} from "../../../../@core/services/auth/auth.service";
-import {TranslationService} from "../../../../@core/services/translation/translation.service";
-import {BatchDetailAssignments} from "../../../../@core/models/batch/batch-detail-assignments";
-import {ModerateProgressConfigComponent} from "./components/moderate-progress-config/moderate-progress-config.component";
+import { BatchProgressStatus } from "../../../../@core/enums/batch-progress-status";
+import { BatchService } from "../../../../@core/services/batch/batch.service";
+import { AuthService } from "../../../../@core/services/auth/auth.service";
+import { TranslationService } from "../../../../@core/services/translation/translation.service";
+import { BatchDetailAssignments } from "../../../../@core/models/batch/batch-detail-assignments";
+import { ModerateProgressConfigComponent } from "./components/moderate-progress-config/moderate-progress-config.component";
 
 @Component({
 	selector: "app-moderate",
@@ -14,13 +14,13 @@ import {ModerateProgressConfigComponent} from "./components/moderate-progress-co
 	styleUrls: ["./moderate.component.scss"],
 	host: { class: "translate-application" }
 })
-export class ModerateComponent extends ModerateProgressConfigComponent implements  OnInit {
+export class ModerateComponent extends ModerateProgressConfigComponent implements OnInit {
 	moderationAssignment: ModerationAssignment;
 	currentUser: any;
 	batchDetailAssignments: BatchDetailAssignments;
 	batchDetailsId: number;
 
-	currentRouteDetails : {
+	currentRouteDetails: {
 		assignmentUrl: string;
 		approveTranslationUrl: string;
 		rejectTranslationUrl: string;
@@ -41,15 +41,15 @@ export class ModerateComponent extends ModerateProgressConfigComponent implement
 				approveTranslationUrl: "approve/translatedsentence/",
 				rejectTranslationUrl: "reject/translatedsentence",
 				markAsReviewedUrl: "textVerified",
-				task: BatchProgressStatus.review
+				task: BatchProgressStatus.EXPERT_REVIEW
 			};
-		}else {
+		} else {
 			this.currentRouteDetails = {
 				assignmentUrl: "second-reviewer",
 				approveTranslationUrl: "translatedsentence/expert-approve/",
 				rejectTranslationUrl: "translatedsentence/expert-reject",
 				markAsReviewedUrl: "secondVerification",
-				task: BatchProgressStatus.expertReview
+				task: BatchProgressStatus.EXPERT_REVIEW
 			};
 		}
 	}

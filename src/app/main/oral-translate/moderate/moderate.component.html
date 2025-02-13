@@ -3,7 +3,8 @@
 		<app-audios-to-moderate
 			[sentencesToModerate]="audioAssignment?.unreviewedAudios"
 			[language]="audioAssignment.language"
-			[batchDetailsId]="audioAssignment.batchDetailsId">
+			[batchDetailsId]="audioAssignment.batchDetailsId"
+			[batchProgressStatus]="batchProgressStatus">
 		</app-audios-to-moderate>
 	</div>
 	<ng-template #showReviewedSentences>

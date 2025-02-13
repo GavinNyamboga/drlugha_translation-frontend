@@ -1,53 +1,166 @@
 <div *ngIf="sentencesToModerate.length > 0; else elseBlock">
-    <div class="text-translation funny ">
-        <div class="btn1">{{ 'English' }}</div>
-        <div class="btn1">
-            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor"
-                 class="bi bi-arrow-left-right textnow" viewBox="0 0 16 16">
-                <path fill-rule="evenodd"
-                      d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" />
-            </svg>
-        </div>
-        <div class="btn1">{{ language }}</div>
+    <div class="text-translation funny">
+      <div class="btn1">English</div>
+      <div class="btn1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" fill="currentColor"
+          class="bi bi-arrow-left-right textnow" viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M1 11.5a.5.5 0 0 0 .5.5h11.793l-3.147 3.146a.5.5 0 0 0 .708.708l4-4a.5.5 0 0 0 0-.708l-4-4a.5.5 0 0 0-.708.708L13.293 11H1.5a.5.5 0 0 0-.5.5zm14-7a.5.5 0 0 1-.5.5H2.707l3.147 3.146a.5.5 0 1 1-.708.708l-4-4a.5.5 0 0 1 0-.708l4-4a.5.5 0 1 1 .708.708L2.707 4H14.5a.5.5 0 0 1 .5.5z" />
+        </svg>
+      </div>
+      <div class="btn1">{{ language }}</div>
     </div>
     <div class="card text-center cardvoice">
-        <div class="card-body card-maxwidth">
-
-            <p class="card-text orig">
-                {{ currentAssignment.sentenceText }}
-            </p>
-            <p class="card-text">
-                {{ currentAssignment.translatedSentenceText }}
-            </p>
-        </div>
+      <div class="card-body card-maxwidth">
+        <p class="card-text orig">{{ currentAssignment.sentenceText }}</p>
+        <p class="card-text">{{ currentAssignment.translatedSentenceText }}</p>
+      </div>
     </div>
-
     <div class="mb-4">
-        <div *ngFor="let audio of currentAssignment.audioList" class="mb-3">
-            <div class="d-flex align-items-center justify-content-between">
-                <!-- Audio Player -->
-                <audio #audioControl controls class="flex-grow-1">
-                    <source [src]="audio.audioLink" type="audio/wav">
-                </audio>
-                <div class="d-flex ml-3">
-                    <label>{{audio.recordedBy}}</label>
-                </div>
-    
-                <div class="d-flex ml-3">
-                    <button (click)="rejectVoice(audio.voiceId)" class="btn btn-outline-danger mx-2">Reject</button>
-                    <button (click)="approveVoice(audio.voiceId)" class="btn btn-outline-success mx-2">Verify</button>
-                </div>
+      <div *ngFor="let audio of currentAssignment.audioList" class="mb-3">
+        <div class="audio-container">
+          <!-- Flex container for audio player and label -->
+          <div class="audio-content">
+            <div class="audio-player-wrapper">
+              <audio #audioControl controls class="custom-audio-player">
+                <source [src]="audio.audioLink" type="audio/wav">
+              </audio>
             </div>
+            <div class="recorded-by">
+              <label>{{ audio.recordedBy }}</label>
+            </div>
+          </div>
+          <!-- Button container -->
+          <div class="action-buttons">
+            <ng-container *ngIf="rejectAudioActive">
+              <button (click)="updateRejectAudioActiveValue()" 
+                      class="btn app-btn-secondary">Cancel</button>
+            </ng-container>
+            <button (click)="rejectAudioActive ? rejectFunction(audio.voiceId) : updateRejectAudioActiveValue()"
+                    class="btn btn-outline-danger">Reject</button>
+            <ng-container *ngIf="!rejectAudioActive">
+              <button (click)="approveVoice(audio.voiceId)" 
+                      class="btn btn-outline-success">Verify</button>
+            </ng-container>
+          </div>
         </div>
+        <!-- Comment Section -->
+        <div *ngIf="rejectAudioActive" class="comment-section">
+          <form [formGroup]="commentFormGroup">
+            <textarea 
+              class="form-control"
+              formControlName="comment"
+              id="comment"
+              placeholder="Enter reason for rejection here..."
+              [ngClass]="{'is-invalid': commentFormGroup.get('comment').invalid && commentFormGroup.get('comment').touched}"
+              rows="3">
+            </textarea>
+          </form>
+        </div>
+      </div>
     </div>
-</div>
-
-<ng-template #elseBlock>
+  </div>
+  <ng-template #elseBlock>
     <div class="text-card">
-        <div class="card text-center info">
-            <div class="card-body">
-                <p class="card-text" style="color: #430497;"> No voice recordings to moderate </p>
-            </div>
+      <div class="card text-center info">
+        <div class="card-body">
+          <p class="card-text" style="color: #430497;">No voice recordings to moderate</p>
         </div>
+      </div>
     </div>
-</ng-template>
+  </ng-template>
+  
+  <style>
+  /* Mobile-first approach */
+  .audio-container {
+    padding: 1rem;
+    background-color: #f8f9fa;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .audio-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .audio-player-wrapper {
+    width: 100%;
+  }
+  
+  .custom-audio-player {
+    width: 100%;
+    height: 40px;
+  }
+  
+  .recorded-by {
+    color: #666;
+  }
+  
+  .action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .btn {
+    flex: 1;
+    min-width: 80px;
+    max-width: 120px;
+    white-space: nowrap;
+  }
+  
+  .comment-section {
+    margin-top: 1rem;
+    padding: 1rem;
+    background-color: #fff;
+    border-radius: 0.5rem;
+  }
+  
+  /* Tablet breakpoint */
+  @media (min-width: 768px) {
+    .audio-content {
+      flex-direction: row;
+      align-items: center;
+      margin-bottom: 0;
+    }
+  
+    .audio-player-wrapper {
+      width: auto;
+      flex: 1;
+      max-width: 300px;
+    }
+  
+    .recorded-by {
+      margin-left: 1rem;
+    }
+  
+    .action-buttons {
+      justify-content: flex-end;
+    }
+  
+    .btn {
+      flex: 0 0 auto;
+    }
+  }
+  
+  /* Desktop breakpoint */
+  @media (min-width: 1024px) {
+    .audio-container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  
+    .audio-content {
+      flex: 1;
+      margin-right: 1rem;
+    }
+  
+    .action-buttons {
+      flex: 0 0 auto;
+    }
+  }
+  </style>

@@ -58,7 +58,8 @@
 <!--    &lt;!&ndash;/ content-right &ndash;&gt;-->
 <!--</div>-->
 <app-assignments-view
-	[title]="currentPage == 'recording' ? 'Voice Recording' : 'Voice Review'"
-	[batchDetails]="batchDetailAssignments">
-	<router-outlet></router-outlet>
+    [title]="currentPage == 'recording' ? 'Voice Recording' : 
+             currentPage == 'expert-reviewing' ? 'Voice Expert Review' : 'Voice Review'"
+    [batchDetails]="batchDetailAssignments">
+    <router-outlet></router-outlet>
 </app-assignments-view>

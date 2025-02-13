@@ -29,8 +29,8 @@ export class TranslateComponent implements OnInit {
 		private assignmentsConfig: AssignmentsProgressConfigService
 	) {
 		this.assignmentsConfig.defaultUrl = "/main/oral-translate/translate/recording";
-		this.assignmentsConfig.batchProgress = BatchProgressStatus.audioRecording;
-		this.assignmentsConfig.badgeLabels = BatchProgressStatus.audioRecording;
+		this.assignmentsConfig.batchProgress = BatchProgressStatus.AUDIO_RECORDING;
+		this.assignmentsConfig.badgeLabels = BatchProgressStatus.AUDIO_RECORDING;
 	}
 
 	ngOnInit(): void {
