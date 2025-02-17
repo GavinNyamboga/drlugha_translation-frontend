@@ -31,6 +31,8 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 	progress: number;
 	completedSentences: CompletedSentence[] = [];
 	assigneeTitle: string;
+	originalTranslator: number | null = null;
+	showReassignButton: boolean = false;
 
 	constructor(
 		private fb: UntypedFormBuilder,
@@ -41,12 +43,29 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 
 	ngOnInit(): void {
 		this.batchType === BatchType.AUDIO ? this.assigneeTitle = "Transcriber" : this.assigneeTitle = "Translator";
+
+		this.translatorForm.get('translator').valueChanges.subscribe((value: number) => {
+			// Only show the "Reassign" button if there is an originally assigned translator,
+			// and the new value is non-empty and different from that original.
+			if (this.originalTranslator && value && value !== this.originalTranslator) {
+				this.showReassignButton = true;
+			} else {
+				this.showReassignButton = false;
+			}
+		});
 	}
 
 	ngOnChanges(changes: SimpleChanges): void {
 		if (changes.batchDetail?.currentValue) {
 			this.setFormDefaultValues();
 			this.progress = this.getStepProgress;
+
+			// Capture the original translator value if it exists.
+			if (this.batchDetail?.translatedBy?.userId) {
+				this.originalTranslator = this.batchDetail.translatedBy.userId;
+			} else {
+				this.originalTranslator = null;
+			}
 		}
 	}
 
@@ -133,6 +152,38 @@ export class AssignVerifiersComponent implements OnInit, OnChanges {
 			default:
 				return 11;
 		}
+	}
+
+	reAssignTranslator(): void {
+		this.translatorForm.markAllAsTouched();
+		if (this.translatorForm.invalid) {
+			return;
+		}
+
+		const translator = this.translatorForm.value.translator;
+
+		const translatedById = parseInt(translator, 10);
+		const payload = {
+			userIds: [translatedById]
+		};
+
+		let userRole = UserBatchRole.TEXT_TRANSLATOR;
+		if (this.batchType === BatchType.AUDIO) {
+			userRole = UserBatchRole.AUDIO_TRANSCRIBER;
+		}
+
+		this.batchService.assignUsersToBatch(this.batchDetail.batchDetailsId, payload, userRole).subscribe(
+			(res) => {
+				this.addBatchDetails.emit(res);
+				this.toastService.success("Text Translator reassigned successfully");
+				this.showReassignButton = false;
+				this.originalTranslator = translatedById;
+			},
+			(error) => {
+				console.error(error);
+				this.toastService.error("Something went wrong. Please try again later");
+			}
+		);
 	}
 
 	assignTextVerifier(): void {
