@@ -64,17 +64,18 @@
             </button>
         </div>
     </mat-step>
-    <mat-step label="Second Reviewer" [completed]="progress >= 6">
+    <mat-step label="Text Expert Reviewer" [completed]="progress >= 6">
         <form [formGroup]="secondReviewerForm" (ngSubmit)="assignSecondReviewer()">
             <div class="mt-2">
                 <ng-select [items]="users" bindLabel="username" bindValue="userId" formControlName="secondReviewer"
-                    placeholder="Select Second Reviewer" [appendTo]="'body'"
-                    [ngClass]="{'is-invalid': secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid}">
+                    placeholder="Select Text Expert Reviewer" [appendTo]="'body'"
+                    [ngClass]="{'is-invalid': secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid}"
+                    >
                 </ng-select>
                 <div *ngIf="secondReviewerForm.controls['secondReviewer'].touched && secondReviewerForm.controls['secondReviewer'].invalid"
                     class="invalid-feedback">
                     <div *ngIf="secondReviewerForm.controls['secondReviewer'].errors.required">
-                        Second reviewer is required
+                        Text Expert reviewer is required
                     </div>
                 </div>
                 <div class="mt-3">

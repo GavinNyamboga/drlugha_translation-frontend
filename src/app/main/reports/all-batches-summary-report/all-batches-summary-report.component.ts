@@ -408,6 +408,8 @@ export class AllBatchesSummaryReportComponent extends DownloadAudioFilesComponen
         { value: BatchStatus.RECORDED, label: "Audio recorded" },
         { value: BatchStatus.ASSIGNED_AUDIO_VERIFIER, label: "Audio Assigned Verifier" },
         { value: BatchStatus.AUDIO_VERIFIED, label: "Audio Verified" },
+        { value: BatchStatus.ASSIGNED_EXPERT_AUDIO_REVIEWER, label: "Assigned Audio Expert Reviewer" },
+        { value: BatchStatus.EXPERT_AUDIO_VERIFIED, label: "Completed" }
       ];
     }
   }

@@ -48,7 +48,7 @@ export class OralTranslateComponent implements OnInit, OnDestroy {
 	}
 
 	getUserBatches() {
-		let progressStatus = 0;
+		let progressStatus: BatchProgressStatus = BatchProgressStatus.AUDIO_RECORDING;
 		if (this.currentPage == "recording")
 			progressStatus = BatchProgressStatus.AUDIO_RECORDING;
 		else if (this.currentPage == "reviewing")

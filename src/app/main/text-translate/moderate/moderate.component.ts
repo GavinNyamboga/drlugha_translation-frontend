@@ -41,7 +41,7 @@ export class ModerateComponent extends ModerateProgressConfigComponent implement
 				approveTranslationUrl: "approve/translatedsentence/",
 				rejectTranslationUrl: "reject/translatedsentence",
 				markAsReviewedUrl: "textVerified",
-				task: BatchProgressStatus.EXPERT_REVIEW
+				task: BatchProgressStatus.REVIEW
 			};
 		} else {
 			this.currentRouteDetails = {
@@ -84,6 +84,7 @@ export class ModerateComponent extends ModerateProgressConfigComponent implement
 	}
 
 	getUserBatches() {
+		console.log("TASK..." + this.currentRouteDetails.task);
 		this.batchService.getUserBatchesByStatus(this.currentUser, this.currentRouteDetails.task);
 	}
 
