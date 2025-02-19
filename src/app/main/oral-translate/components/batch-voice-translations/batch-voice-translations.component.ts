@@ -1,9 +1,9 @@
-import {Component, Input, OnInit} from "@angular/core";
-import {NgbModal} from "@ng-bootstrap/ng-bootstrap";
-import {DomSanitizer} from "@angular/platform-browser";
-import {ToastrService} from "ngx-toastr";
-import {RecordedSentence} from "../../../../../@core/models/audio/recorded-sentence";
-import {RecordingsService} from "../../../../../@core/services/recordings.service";
+import { Component, Input, OnInit } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { DomSanitizer } from "@angular/platform-browser";
+import { ToastrService } from "ngx-toastr";
+import { RecordedSentence } from "../../../../../@core/models/audio/recorded-sentence";
+import { RecordingsService } from "../../../../../@core/services/recordings.service";
 
 @Component({
 	selector: "app-batch-voice-translations",
@@ -13,6 +13,7 @@ import {RecordingsService} from "../../../../../@core/services/recordings.servic
 export class BatchVoiceTranslationsComponent implements OnInit {
 	@Input() recordedSentences: RecordedSentence[] = [];
 	selectedSentence: RecordedSentence;
+	selectedVoiceId: number;
 	uploadingAudio = false;
 
 	constructor(
@@ -25,9 +26,10 @@ export class BatchVoiceTranslationsComponent implements OnInit {
 	}
 
 
-	openAudioRecordingModal(content, sentence: RecordedSentence) {
+	openAudioRecordingModal(content, sentence: RecordedSentence, voiceId: number) {
 		this.selectedSentence = sentence;
-		const modalRef = this.modalService.open(content, {centered: true, backdrop: true, size: "lg"});
+		this.selectedVoiceId = voiceId;
+		const modalRef = this.modalService.open(content, { centered: true, backdrop: true, size: "lg" });
 		modalRef.result.then(() => {
 			this.closeModal();
 		});
@@ -38,14 +40,22 @@ export class BatchVoiceTranslationsComponent implements OnInit {
 	}
 	saveAudioRecording(blob: Blob) {
 		this.uploadingAudio = true;
-		this.recordingService.updateAudioFile(blob, this.selectedSentence.voiceId).subscribe({
+		this.recordingService.updateAudioFile(blob, this.selectedVoiceId).subscribe({
 			next: (res: any) => {
 				this.toastr.success("Audio saved successfully");
 				this.selectedSentence.audioLink = res?.message;
 				this.selectedSentence.accepted = null;
 				this.uploadingAudio = false;
-				const audioElement = document.getElementById(`${this.selectedSentence.translatedSentenceId}`) as HTMLAudioElement;
-				audioElement.load();
+				const audioElement = document.getElementById(`${this.selectedVoiceId}`) as HTMLAudioElement;
+				if (audioElement) {
+					const srcElement = audioElement.querySelector('source');
+					if (srcElement) {
+						srcElement.src = this.selectedSentence.audioLink;
+					}
+					audioElement.src = this.selectedSentence.audioLink;
+					audioElement.load();
+				}
+
 				this.modalService.dismissAll();
 			},
 			error: (error) => {

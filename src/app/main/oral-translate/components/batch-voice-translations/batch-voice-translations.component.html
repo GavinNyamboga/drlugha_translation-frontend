@@ -1,64 +1,108 @@
 <div class="table-responsive">
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>#</th>
-            <th>Sentence</th>
-            <th>Translation</th>
-            <th style="width: 20%">Audio</th>
-            <th>Status</th>
+  <table class="table table-bordered">
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Sentence</th>
+        <th>Translation</th>
+        <th style="width: 30%">Audio</th>
+        <th>Recorder</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+      <ng-container *ngFor="let sentence of recordedSentences; let sentenceIndex = index">
+        <!-- If there's no audio or only one audio item -->
+        <tr *ngIf="!sentence.audioList?.length || sentence.audioList.length === 1">
+          <td>{{ sentenceIndex + 1 }}</td>
+          <td>{{ sentence.sentenceText }}</td>
+          <td>{{ sentence.translatedSentenceText }}</td>
+          <td>
+            <div class="d-flex align-items-center m-0">
+              <audio *ngIf="sentence.audioList?.length" controls [id]="sentence.audioList[0].voiceId" class="me-3 my-0">
+                <source [src]="sentence.audioList[0].audioLink" type="audio/mpeg">
+              </audio>
+              <div *ngIf="sentence.audioList?.length && !sentence.audioList[0].accepted"
+                   class="ms-2 fs-4 re-record-icon"
+                   (click)="openAudioRecordingModal(recordAudioModal, sentence, sentence.audioList[0].voiceId)">
+                <i [data-feather]="'rotate-cw'"></i>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div *ngIf="sentence.audioList?.length">{{sentence.audioList[0].recordedBy}}</div>
+          </td>
+          <td>
+            <small *ngIf="sentence.audioList?.length && sentence.audioList[0].accepted == null" class="badge badge-warning">
+              Pending Review
+            </small>
+            <small *ngIf="sentence.audioList?.length && sentence.audioList[0].accepted === true" class="badge badge-success">
+              Approved
+            </small>
+            <small *ngIf="sentence.audioList?.length && sentence.audioList[0].accepted === false" class="badge badge-danger">
+              Rejected
+            </small>
+          </td>
         </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let sentence of recordedSentences; let sentenceIndex = index">
-            <td>{{sentenceIndex + 1}}</td>
-            <td>{{sentence.sentenceText}}</td>
-            <td>{{sentence.translatedSentenceText}}</td>
+
+        <!-- If there are multiple audio items -->
+        <ng-container *ngIf="sentence.audioList?.length > 1">
+          <tr *ngFor="let audioItem of sentence.audioList; let isFirst = first">
+            <!-- Only show sentence info in first row -->
+            <td *ngIf="isFirst" [attr.rowspan]="sentence.audioList.length">{{ sentenceIndex + 1 }}</td>
+            <td *ngIf="isFirst" [attr.rowspan]="sentence.audioList.length">{{ sentence.sentenceText }}</td>
+            <td *ngIf="isFirst" [attr.rowspan]="sentence.audioList.length">{{ sentence.translatedSentenceText }}</td>
             <td>
-                <div class="d-flex flex-row align-items-center">
-                    <audio controls [id]="sentence.translatedSentenceId">
-                        <source [src]="sentence.audioLink" type="audio/mpeg">
-                    </audio>
-                    <div *ngIf="!sentence.accepted"
-                         class="ms-2 fs-4 re-record-icon"
-                         (click)="openAudioRecordingModal(recordAudioModal, sentence)">
-                        <i [data-feather]="'rotate-cw'"></i>
-                    </div>
+              <div class="d-flex align-items-center m-0">
+                <audio controls [id]="audioItem.voiceId" class="me-3 my-0">
+                  <source [src]="audioItem.audioLink" type="audio/mpeg">
+                </audio>
+                <div *ngIf="!audioItem.accepted"
+                     class="ms-2 fs-4 re-record-icon"
+                     (click)="openAudioRecordingModal(recordAudioModal, sentence, audioItem.voiceId)">
+                  <i [data-feather]="'rotate-cw'"></i>
                 </div>
+              </div>
+            </td>
+          
+            <td>
+              <div *ngIf="audioItem.recordedBy">{{audioItem.recordedBy}}</div>
             </td>
             <td>
-                <small *ngIf="sentence.accepted == null" class="badge badge-warning">
-                     Pending Review
-                </small>
-                <small *ngIf="sentence.accepted" class="badge badge-success">
-                     Approved
-                </small>
-                <small *ngIf="sentence.accepted == false" class="badge badge-danger">
-                    Rejected
-                </small>
+              <small *ngIf="audioItem.accepted == null" class="badge badge-warning">
+                Pending Review
+              </small>
+              <small *ngIf="audioItem.accepted === true" class="badge badge-success">
+                Approved
+              </small>
+              <small *ngIf="audioItem.accepted === false" class="badge badge-danger">
+                Rejected
+              </small>
             </td>
-        </tr>
-        </tbody>
-    </table>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
 </div>
 
 <ng-template #recordAudioModal let-modal>
-    <div class="modal-header">
-        Record Audio Translation
+  <div class="modal-header">
+      Record Audio Translation
 
-        <button type="button" class="close" (click)="closeModal()" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-        </button>
-    </div>
-    <div class="modal-body">
-        <app-record-audio
-                [uploadingAudio]="uploadingAudio"
-                (saveAudio)="saveAudioRecording($event)">
-            <div class="text-center mb-3">
-                <span>
-                    {{ selectedSentence.sentenceText }}
-                </span>
-            </div>
-        </app-record-audio>
-    </div>
+      <button type="button" class="close" (click)="closeModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+      </button>
+  </div>
+  <div class="modal-body">
+      <app-record-audio
+              [uploadingAudio]="uploadingAudio"
+              (saveAudio)="saveAudioRecording($event)">
+          <div class="text-center mb-3">
+              <span>
+                  {{ selectedSentence.sentenceText }}
+              </span>
+          </div>
+      </app-record-audio>
+  </div>
 </ng-template>
