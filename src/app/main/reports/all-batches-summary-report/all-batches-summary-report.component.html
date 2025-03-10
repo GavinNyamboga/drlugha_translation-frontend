@@ -121,8 +121,8 @@
 			<div class="row mb-3">
 				<div class="col-md-4">
 					<label for="languageFilter">Filter by Language</label>
-					<ng-select id="languageFilter" [(ngModel)]="languageId" (change)="applyFilters()"
-						[clearable]="true" placeholder="Select Language">
+					<ng-select id="languageFilter" [(ngModel)]="languageId" (change)="applyFilters()" [clearable]="true"
+						placeholder="Select Language">
 						<ng-option *ngFor="let lang of languages" [value]="lang.languageId">{{ lang.name }}</ng-option>
 					</ng-select>
 				</div>
@@ -163,7 +163,7 @@
 							<th [attr.colspan]="2 + extraColSpan" class="text-center">{{((selectedOption ==
 								'text_feedback' || selectedOption == 'text') ? 'Text Moderation' : 'Audio Moderation')}}
 							</th>
-							<th [attr.colspan]="2 + extraColSpan" class="text-ce	nter">Expert Text Review (10%)</th>
+							<th [attr.colspan]="2 + extraColSpan" class="text-center">Expert Text Review (10%)</th>
 							<th [attr.colspan]="4 + extraColSpan" class="text-center">Audio Recording</th>
 							<!--<th *ngIf="selectedOption == 'audio'" [attr.colspan]="3 + extraColSpan" class="text-center">Audio Moderation</th> -->
 							<th *ngIf="isAdmin" rowspan="2" style="width: 100px;" class="text-center">Action</th>
@@ -226,72 +226,84 @@
 								</div>
 							</td>
 						</tr>
-
 						<ng-container *ngFor="let report of batchDetailsReport; let reportIndex = index">
 							<tr>
-								<td *ngIf="isAdmin" class="text-center">
-									<div class="custom-control custom-checkbox">
-										<input type="checkbox" class="custom-control-input"
-											[id]="'checkbox_' + report.batchDetailsId"
-											[checked]="selectedBatches.has(report.batchDetailsId)"
-											(change)="toggleBatchSelection(report.batchDetailsId)">
-										<label class="custom-control-label"
-											[for]="'checkbox_' + report.batchDetailsId"></label>
-									</div>
-								</td>
-
-								<td>{{ (page - 1) * pageSize + reportIndex + 1 }}</td>
-								<td>
-									<a [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">{{
-										report.source }}</a>
-								</td>
-								<td>{{ report.language }}</td>
-								<td>
-									<small><span>{{ report.status }}</span></small>
-								</td>
-								<td>{{ report.numberOfSentences }}</td>
-								<td *ngIf="isAdmin">{{ report.translator }}</td>
-								<td>{{ report.sentencesTranslated }}</td>
-								<td *ngIf="isAdmin">{{ report.moderator }}</td>
-								<td>{{ report.sentencesApproved }}</td>
-								<td>{{ report.sentencesRejected }}</td>
-								<td *ngIf="isAdmin">{{ report.expert }}</td>
-								<td>{{ report.sentencesExpertApproved }}</td>
-								<td>{{ report.sentencesExpertRejected }}</td>
-
-								<ng-container *ngIf="selectedOption == 'text'">
-									<ng-container *ngIf="report.audioStats?.length > 0; else noAudioStats">
-										<td *ngIf="isAdmin">{{ report.audioStats[0].recorder }}</td>
-										<td>{{ report.audioStats[0].audiosRecorded }}</td>
-										<td *ngIf="isAdmin">{{ report.audioModerator }}</td>
-										<td>{{ report.audioStats[0].audiosApproved }}</td>
-										<td>{{ report.audioStats[0].audiosRejected }}</td>
-									</ng-container>
+							  <!-- Checkbox column -->
+							  <td *ngIf="isAdmin" class="text-center">
+								<div class="custom-control custom-checkbox">
+								  <input type="checkbox" class="custom-control-input"
+										 [id]="'checkbox_' + report.batchDetailsId"
+										 [checked]="selectedBatches.has(report.batchDetailsId)"
+										 (change)="toggleBatchSelection(report.batchDetailsId)">
+								  <label class="custom-control-label" [for]="'checkbox_' + report.batchDetailsId"></label>
+								</div>
+							  </td>
+						  
+							  <!-- Standard report columns -->
+							  <td>{{ (page - 1) * pageSize + reportIndex + 1 }}</td>
+							  <td>
+								<a [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">{{ report.source }}</a>
+							  </td>
+							  <td>{{ report.language }}</td>
+							  <td><small><span>{{ report.status }}</span></small></td>
+							  <td>{{ report.numberOfSentences }}</td>
+							  <td *ngIf="isAdmin">{{ report.translator }}</td>
+							  <td>{{ report.sentencesTranslated }}</td>
+							  <td *ngIf="isAdmin">{{ report.moderator }}</td>
+							  <td>{{ report.sentencesApproved }}</td>
+							  <td>{{ report.sentencesRejected }}</td>
+							  <td *ngIf="isAdmin">{{ report.expert }}</td>
+							  <td>{{ report.sentencesExpertApproved }}</td>
+							  <td>{{ report.sentencesExpertRejected }}</td>
+						  
+							  <!-- Audio stats as a nested table -->
+							  <ng-container *ngIf="selectedOption == 'text'">
+								<ng-container *ngIf="report.audioStats?.length > 0; else noAudioStats">
+								  <!-- Single cell containing nested table spanning all audio columns -->
+								  <td [attr.colspan]="isAdmin ? 5 : 3" class="p-0 align-middle border">
+									<table class="w-100 h-100 border-0" style="table-layout: fixed; width: 100%;">
+									  <tbody>
+										<ng-container *ngIf="report.audioStats?.length === 1; else multipleAudioStats">
+										  <!-- Single row case inserted directly into the table -->
+										  <tr>
+											<td *ngIf="isAdmin" class="border text-center p-2">{{ report.audioStats[0].recorder }}</td>
+											<td class="border text-center p-2">{{ report.audioStats[0].audiosRecorded }}</td>
+											<td *ngIf="isAdmin" class="border text-center p-2">{{ report.audioModerator }}</td>
+											<td class="border text-center p-2">{{ report.audioStats[0].audiosApproved }}</td>
+											<td class="border text-center p-2">{{ report.audioStats[0].audiosRejected }}</td>
+										  </tr>
+										</ng-container>
+								  
+										<!-- Multiple rows case -->
+										<ng-template #multipleAudioStats>
+										  <tr *ngFor="let audio of report.audioStats; let audioIndex = index" [class.border-top]="audioIndex > 0">
+											<td *ngIf="isAdmin" class="border text-center p-2">{{ audio.recorder }}</td>
+											<td class="border text-center p-2">{{ audio.audiosRecorded }}</td>
+											<td *ngIf="isAdmin" class="border text-center p-2">{{ report.audioModerator }}</td>
+											<td class="border text-center p-2">{{ audio.audiosApproved }}</td>
+											<td class="border text-center p-2">{{ audio.audiosRejected }}</td>
+										  </tr>
+										</ng-template>
+									  </tbody>
+									</table>
+								  </td>
+								  
 								</ng-container>
-
-								<td class="text-center" *ngIf="isAdmin">
-									<div class="d-flex flex-row">
-										<button type="button" class="btn btn-primary btn-sm mr-1"
-											[routerLink]="['/main/reports/batch-details', report.batchDetailsId]">View</button>
-										<button type="button" class="btn btn-danger btn-sm"
-											(click)="openDeleteBatchDetailModal(report, deleteBatchDetailModal)">Delete</button>
-									</div>
-								</td>
+							  </ng-container>
+						  
+							  <!-- Action column -->
+							  <td class="text-center" *ngIf="isAdmin">
+								<div class="d-flex flex-row">
+								  <button type="button" class="btn btn-primary btn-sm mr-1" 
+										  [routerLink]="['/main/reports/batch-details', report.batchDetailsId]">View</button>
+								  <button type="button" class="btn btn-danger btn-sm"
+										  (click)="openDeleteBatchDetailModal(report, deleteBatchDetailModal)">Delete</button>
+								</div>
+							  </td>
 							</tr>
+						  </ng-container>
 
-							<ng-container *ngIf="selectedOption == 'text' && report.audioStats?.length > 1">
-								<tr *ngFor="let audio of report.audioStats.slice(1); let audioIndex = index"
-									class="audio-stats-row">
-									<td colspan="14"></td>
-									<td *ngIf="isAdmin">{{ audio.recorder }}</td>
-									<td>{{ audio.audiosRecorded }}</td>
-									<td *ngIf="isAdmin">{{ report.audioModerator }}</td>
-									<td>{{ audio.audiosApproved }}</td>
-									<td>{{ audio.audiosRejected }}</td>
-									<td *ngIf="isAdmin"></td>
-								</tr>
-							</ng-container>
-						</ng-container>
+
 					</tbody>
 				</table>
 			</div>
@@ -347,3 +359,11 @@
 <ng-template #downloadModal let-modal>
 	<app-download-audio-files [modal]="modal" [totalFiles]="totalAudioFiles"></app-download-audio-files>
 </ng-template>
+
+<ng-template #noAudioStats>
+	<td *ngIf="isAdmin">-</td>
+	<td>-</td>
+	<td *ngIf="isAdmin">-</td>
+	<td>-</td>
+	<td>-</td>
+  </ng-template>

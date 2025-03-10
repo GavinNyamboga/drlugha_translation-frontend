@@ -26,6 +26,14 @@ export const menu: CoreMenu[] = [
         role: [roles.Admin],
       },
       {
+        id: "language-statistics",
+        title: "Language Statistics",
+        type: "item",
+        url: "main/admin/language-statistics",
+        icon: "bar-chart-2",
+        role: [roles.Admin],
+      },
+      {
         id: "statistics",
         title: "Statistics",
         type: "item",
