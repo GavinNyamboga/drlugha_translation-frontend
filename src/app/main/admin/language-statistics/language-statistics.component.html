@@ -31,7 +31,10 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar text-bar"
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios) > 90,
+                'blue-bar': calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios) <= 90
+              }"
                 [style.width.%]="calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios)">
               </div>
             </div>
@@ -46,8 +49,10 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar text-bar"
-                [style.width.%]="calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated)">
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated) > 90,
+                'blue-bar': calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated) <= 90
+              }" [style.width.%]="calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated)">
               </div>
             </div>
           </div>
@@ -63,7 +68,10 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar text-bar"
+              <div class="progress-bar " [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected, batchStat.textToBeExpertReviewed) > 90,
+                'blue-bar': calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected, batchStat.textToBeExpertReviewed) <= 90
+              }"
                 [style.width.%]="calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected, batchStat.textToBeExpertReviewed)">
               </div>
             </div>
@@ -78,8 +86,10 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar audio-bar"
-                [style.width.%]="calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalTextApproved)">
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalTextApproved) > 90,
+                'orange-bar': calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalTextApproved) <= 90
+              }" [style.width.%]="calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalTextApproved)">
               </div>
             </div>
           </div>
@@ -92,8 +102,11 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar audio-bar"
-                [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalBatchSentencesOrAudios)">
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded) > 90,
+                'orange-bar':calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded) <= 90
+              }"
+                [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded)">
               </div>
             </div>
           </div>
@@ -153,7 +166,10 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar audio-bar"
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1) > 90,
+                'orange-bar': calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1) <= 90
+              }"
                 [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1)">
               </div>
             </div>
@@ -169,7 +185,10 @@
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar audio-bar"
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1) > 90,
+                'orange-bar': calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1) <= 90
+              }"
                 [style.width.%]="calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1)">
               </div>
             </div>

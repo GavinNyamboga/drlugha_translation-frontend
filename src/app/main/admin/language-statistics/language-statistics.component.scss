@@ -106,6 +106,18 @@ h1 {
   border-radius: 4px;
 }
 
+.green-bar {
+  background-color: #27ae60; /* Green for >90% */
+}
+
+.blue-bar {
+  background-color: #3498db; /* Blue for <=90% */
+}
+
+.orange-bar {
+  background-color: #f39c12; /* Orange for audio progress */
+}
+
 .text-bar {
   background-color: #3498db;
 }
