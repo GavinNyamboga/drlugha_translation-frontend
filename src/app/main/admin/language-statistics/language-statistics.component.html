@@ -1,0 +1,201 @@
+<!-- language-dashboard.component.html -->
+<!-- <div class="container">
+  <h1>Language Statistics Dashboard</h1> -->
+
+<div class="languages-container">
+  <div class="language-card" *ngFor="let language of languages">
+    <div class="language-header">
+      <div class="language-name">{{ language.languageName }}</div>
+      <!-- <div class="language-id">ID: {{ language.languageId }}</div> -->
+    </div>
+
+    <div class="batch-types">
+      <!-- Display each batch type -->
+      <div class="batch-type" *ngFor="let batchStat of language.batchTypeStatistics">
+        <div class="batch-type-title">
+          <span>{{ batchStat.batchType }}</span>
+          <span class="batch-count">{{ formatNumber(batchStat.totalBatchSentencesOrAudios) }} {{ batchStat.batchType ===
+            'AUDIO' ? 'audios to transcribe' : 'sentences to translate' }}</span>
+        </div>
+        <div class="language-id">Total Batches: {{ batchStat.batchCount }}</div>
+        <!-- TEXT specific stats -->
+        <ng-container *ngIf="batchStat.batchType === 'TEXT'">
+          <!-- Translation Progress -->
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Translation Progress</span>
+              <span>{{ calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios).toFixed(1)
+                }}%
+                ({{ formatNumber(batchStat.totalTranslated) }} / {{ formatNumber(batchStat.totalBatchSentencesOrAudios)
+                }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar text-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Approval Rate -->
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Text Approval Rate</span>
+              <span>{{ calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated).toFixed(1) }}%
+                ({{ formatNumber(batchStat.totalTextApproved) }} / {{ formatNumber(batchStat.totalTranslated) }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar text-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Text Expert Review Coverage -->
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Text Expert Review</span>
+              <span>{{ calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected,
+                batchStat.textToBeExpertReviewed).toFixed(1) }}%
+                ({{ formatNumber(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected) }} / {{
+                formatNumber(batchStat.textToBeExpertReviewed) }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar text-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected, batchStat.textToBeExpertReviewed)">
+              </div>
+            </div>
+          </div>
+
+          <!-- Audio Recording Progress -->
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Audio Recording Progress</span>
+              <span>{{ calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalTextApproved).toFixed(1) }}%
+                ({{ formatNumber(batchStat.totalAudioRecorded) }} / {{ formatNumber(batchStat.totalTextApproved) }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar audio-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalTextApproved)">
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Audio Approval Progress</span>
+              <span>{{ calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded).toFixed(1) }}%
+                ({{ formatNumber(batchStat.totalAudioApproved) }} / {{ formatNumber(batchStat.totalAudioRecorded) }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar audio-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalBatchSentencesOrAudios)">
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-stats">
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTranslated) }}</div>
+              <div class="stat-label">Translated</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalAudioRecorded) }}</div>
+              <div class="stat-label">Audio Recordings</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTextApproved) }}</div>
+              <div class="stat-label">Approved Texts</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTextExpertApproved) }}</div>
+              <div class="stat-label">Expert Approved</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalAudioApproved) }}</div>
+              <div class="stat-label">Audios Approved</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalAudioRejected) }}</div>
+              <div class="stat-label">Audios Rejected</div>
+            </div>
+          </div>
+        </ng-container>
+
+        <!-- AUDIO specific stats - keeping this section the same -->
+        <ng-container *ngIf="batchStat.batchType === 'AUDIO'">
+          <!-- Audio Recording Progress -->
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Transcription Progress</span>
+              <span>{{ calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios).toFixed(1)
+                }}%
+                ({{ formatNumber(batchStat.totalTranslated) }} / {{ formatNumber(batchStat.totalBatchSentencesOrAudios)
+                }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar audio-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalBatchSentencesOrAudios)">
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Text Approval Progress</span>
+              <span>{{ calculatePercentage(batchStat.totalTextApproved, batchStat.totalTranslated).toFixed(1) }}%
+                ({{ formatNumber(batchStat.totalTextApproved) }} / {{ formatNumber(batchStat.totalTranslated || 1) }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar audio-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1)">
+              </div>
+            </div>
+          </div>
+
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Text Expert Review</span>
+              <span>{{ calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected,
+                batchStat.textToBeExpertReviewed || 1).toFixed(1) }}%
+                ({{ formatNumber(batchStat.totalTextExpertApproved + batchStat.totalTextExpertRejected) }} / {{
+                formatNumber(batchStat.textToBeExpertReviewed || 1) }})
+              </span>
+            </div>
+            <div class="progress-bar-container">
+              <div class="progress-bar audio-bar"
+                [style.width.%]="calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1)">
+              </div>
+            </div>
+          </div>
+
+          <div class="summary-stats">
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTranslated) }}</div>
+              <div class="stat-label">Transcription</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTextApproved) }}</div>
+              <div class="stat-label">Approved</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTextRejected) }}</div>
+              <div class="stat-label">Rejected</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">{{ formatNumber(batchStat.totalTextExpertApproved) }}</div>
+              <div class="stat-label">Expert Approved</div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+    </div>
+  </div>
+  <!-- </div> -->
+</div>
