@@ -105,8 +105,7 @@
               <div class="progress-bar" [ngClass]="{
                 'green-bar': calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded) > 90,
                 'orange-bar':calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded) <= 90
-              }"
-                [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded)">
+              }" [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded)">
               </div>
             </div>
           </div>
@@ -145,15 +144,18 @@
           <div class="progress-item">
             <div class="progress-label">
               <span>Transcription Progress</span>
-              <span>{{ calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios).toFixed(1)
-                }}%
+              <span>{{ calculatePercentage(batchStat.totalTranslated,
+                batchStat.totalBatchSentencesOrAudios).toFixed(1)}}%
                 ({{ formatNumber(batchStat.totalTranslated) }} / {{ formatNumber(batchStat.totalBatchSentencesOrAudios)
                 }})
               </span>
             </div>
             <div class="progress-bar-container">
-              <div class="progress-bar audio-bar"
-                [style.width.%]="calculatePercentage(batchStat.totalAudioRecorded, batchStat.totalBatchSentencesOrAudios)">
+              <div class="progress-bar" [ngClass]="{
+                'green-bar': calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios) > 90,
+                'orange-bar': calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios) <= 90
+              }"
+                [style.width.%]="calculatePercentage(batchStat.totalTranslated, batchStat.totalBatchSentencesOrAudios)">
               </div>
             </div>
           </div>
@@ -167,10 +169,10 @@
             </div>
             <div class="progress-bar-container">
               <div class="progress-bar" [ngClass]="{
-                'green-bar': calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1) > 90,
-                'orange-bar': calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1) <= 90
+                'green-bar': calculatePercentage(batchStat.totalTextApproved, batchStat.totalAudioRecorded || 1) > 90,
+                'orange-bar': calculatePercentage(batchStat.totalTextApproved, batchStat.totalAudioRecorded || 1) <= 90
               }"
-                [style.width.%]="calculatePercentage(batchStat.totalAudioApproved, batchStat.totalAudioRecorded || 1)">
+                [style.width.%]="calculatePercentage(batchStat.totalTextApproved, batchStat.totalAudioRecorded || 1)">
               </div>
             </div>
           </div>
@@ -186,10 +188,10 @@
             </div>
             <div class="progress-bar-container">
               <div class="progress-bar" [ngClass]="{
-                'green-bar': calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1) > 90,
-                'orange-bar': calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1) <= 90
+                'green-bar': calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1) > 90,
+                'orange-bar': calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1) <= 90
               }"
-                [style.width.%]="calculatePercentage(batchStat.totalAudioExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1)">
+                [style.width.%]="calculatePercentage(batchStat.totalTextExpertApproved + batchStat.totalExpertAudioRejected, batchStat.totalAudioRecorded || 1)">
               </div>
             </div>
           </div>
@@ -197,7 +199,7 @@
           <div class="summary-stats">
             <div class="stat-item">
               <div class="stat-value">{{ formatNumber(batchStat.totalTranslated) }}</div>
-              <div class="stat-label">Transcription</div>
+              <div class="stat-label">Transcribed</div>
             </div>
             <div class="stat-item">
               <div class="stat-value">{{ formatNumber(batchStat.totalTextApproved) }}</div>
